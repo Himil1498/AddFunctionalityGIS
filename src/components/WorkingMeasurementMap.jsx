@@ -4860,17 +4860,15 @@ Whitefield Sub-POP,13.0358,77.5970,Sub-POP,Active,"Whitefield, Bangalore, Karnat
 
       {/* Controls */}
       <Paper elevation={2} sx={{ p: 2, mb: 1 }}>
-        <Stack direction="row" spacing={1} alignItems="center">
-          {/* Add Points Button - Simple and Clear */}
+        <Stack direction="row" spacing={2} alignItems="center">
+          {/* Modern Add Points Button */}
           <Button 
             variant={isDrawing ? 'contained' : 'outlined'}
-            color={isDrawing ? 'success' : 'primary'}
+            size="large"
             onClick={() => {
               if (isDrawing) {
-                // Stop adding points
                 stopDrawing();
               } else {
-                // Start adding points
                 setDrawingMode('distance');
                 stopPolygonDrawing();
                 startDrawing();
@@ -4879,11 +4877,33 @@ Whitefield Sub-POP,13.0358,77.5970,Sub-POP,Active,"Whitefield, Bangalore, Karnat
             startIcon={isDrawing ? <Stop /> : <PlayArrow />}
             disabled={!loaded}
             sx={{
-              minWidth: 120,
-              fontWeight: 600
+              minWidth: 140,
+              fontWeight: 'bold',
+              textTransform: 'none',
+              borderRadius: 3,
+              py: 1.5,
+              px: 3,
+              background: isDrawing 
+                ? 'linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%)' 
+                : 'transparent',
+              color: isDrawing ? 'white' : '#2196F3',
+              borderColor: isDrawing ? '#4CAF50' : '#2196F3',
+              borderWidth: 2,
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              '&:hover': {
+                background: isDrawing 
+                  ? 'linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%)' 
+                  : 'rgba(33, 150, 243, 0.08)',
+                borderColor: isDrawing ? '#2E7D32' : '#1976D2',
+                transform: 'translateY(-2px)',
+                boxShadow: isDrawing 
+                  ? '0 4px 12px rgba(76, 175, 80, 0.3)' 
+                  : '0 4px 12px rgba(33, 150, 243, 0.3)',
+                borderWidth: 2
+              }
             }}
           >
-            {isDrawing ? 'Stop Adding' : 'Add Points'}
+            {isDrawing ? '🛑 Stop Distance' : '📏 Measure Distance'}
           </Button>
           
           {/* Distance measurement controls - only show when we have points */}
@@ -4896,16 +4916,14 @@ Whitefield Sub-POP,13.0358,77.5970,Sub-POP,Active,"Whitefield, Bangalore, Karnat
             />
           )}
           
-          {/* Polygon Drawing Button */}
+          {/* Modern Polygon Drawing Button */}
           <Button 
             variant={isPolygonDrawing ? 'contained' : 'outlined'}
-            color={isPolygonDrawing ? 'success' : 'secondary'}
+            size="large"
             onClick={() => {
               if (isPolygonDrawing) {
-                // Stop polygon drawing
                 stopPolygonDrawing();
               } else {
-                // Start polygon drawing
                 stopDrawing();
                 startPolygonDrawing();
               }
@@ -4913,11 +4931,33 @@ Whitefield Sub-POP,13.0358,77.5970,Sub-POP,Active,"Whitefield, Bangalore, Karnat
             startIcon={isPolygonDrawing ? <Stop /> : <Crop />}
             disabled={!loaded}
             sx={{
-              minWidth: 100,
-              fontWeight: 600
+              minWidth: 140,
+              fontWeight: 'bold',
+              textTransform: 'none',
+              borderRadius: 3,
+              py: 1.5,
+              px: 3,
+              background: isPolygonDrawing 
+                ? 'linear-gradient(135deg, #9C27B0 0%, #7B1FA2 100%)' 
+                : 'transparent',
+              color: isPolygonDrawing ? 'white' : '#9C27B0',
+              borderColor: isPolygonDrawing ? '#9C27B0' : '#9C27B0',
+              borderWidth: 2,
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              '&:hover': {
+                background: isPolygonDrawing 
+                  ? 'linear-gradient(135deg, #7B1FA2 0%, #4A148C 100%)' 
+                  : 'rgba(156, 39, 176, 0.08)',
+                borderColor: isPolygonDrawing ? '#7B1FA2' : '#7B1FA2',
+                transform: 'translateY(-2px)',
+                boxShadow: isPolygonDrawing 
+                  ? '0 4px 12px rgba(156, 39, 176, 0.3)' 
+                  : '0 4px 12px rgba(156, 39, 176, 0.3)',
+                borderWidth: 2
+              }
             }}
           >
-            {isPolygonDrawing ? 'Stop Polygon' : 'Draw Polygon'}
+            {isPolygonDrawing ? '🛑 Stop Polygon' : '📐 Draw Polygon'}
           </Button>
           
           {/* Show polygon area when available */}
@@ -4930,9 +4970,10 @@ Whitefield Sub-POP,13.0358,77.5970,Sub-POP,Active,"Whitefield, Bangalore, Karnat
             />
           )}
           
-          {/* Main action buttons */}
+          {/* Modern Clear All Button */}
           <Button 
             variant="outlined" 
+            size="large"
             onClick={() => {
               addLog('📉 === CLEAR ALL BUTTON CLICKED ===');
               addLog(`📉 Before clear - Markers: ${markers.length}, Labels: ${distanceLabels.length}, Points: ${points.length}, Drawing: ${isDrawing}`);
@@ -4940,34 +4981,90 @@ Whitefield Sub-POP,13.0358,77.5970,Sub-POP,Active,"Whitefield, Bangalore, Karnat
             }} 
             disabled={!loaded || (points.length === 0 && polygonPoints.length === 0)}
             startIcon={<Clear />}
-            color="warning"
+            sx={{
+              fontWeight: 'bold',
+              textTransform: 'none',
+              borderRadius: 3,
+              py: 1.5,
+              px: 3,
+              borderColor: '#FF5722',
+              color: '#FF5722',
+              borderWidth: 2,
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              '&:hover': {
+                backgroundColor: 'rgba(255, 87, 34, 0.08)',
+                borderColor: '#D84315',
+                color: '#D84315',
+                transform: 'translateY(-2px)',
+                boxShadow: '0 4px 12px rgba(255, 87, 34, 0.3)',
+                borderWidth: 2
+              }
+            }}
           >
-            Clear All
+            🧹 Clear All
           </Button>
           
-          {/* Save distance measurement */}
+          {/* Modern Save Distance Button */}
           {points.length >= 2 && (
             <Button 
               variant="outlined" 
+              size="large"
               onClick={() => setSaveDialogOpen(true)}
               disabled={!loaded}
               startIcon={<Save />}
-              color="success"
+              sx={{
+                fontWeight: 'bold',
+                textTransform: 'none',
+                borderRadius: 3,
+                py: 1.5,
+                px: 3,
+                borderColor: '#4CAF50',
+                color: '#4CAF50',
+                borderWidth: 2,
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                '&:hover': {
+                  backgroundColor: 'rgba(76, 175, 80, 0.08)',
+                  borderColor: '#2E7D32',
+                  color: '#2E7D32',
+                  transform: 'translateY(-2px)',
+                  boxShadow: '0 4px 12px rgba(76, 175, 80, 0.3)',
+                  borderWidth: 2
+                }
+              }}
             >
-              Save Distance
+              💾 Save Distance
             </Button>
           )}
           
-          {/* Save polygon */}
+          {/* Modern Save Polygon Button */}
           {polygonPoints.length >= 3 && (
             <Button 
               variant="outlined" 
+              size="large"
               onClick={openPolygonSaveDialog}
               disabled={!loaded}
               startIcon={<Save />}
-              color="success"
+              sx={{
+                fontWeight: 'bold',
+                textTransform: 'none',
+                borderRadius: 3,
+                py: 1.5,
+                px: 3,
+                borderColor: '#9C27B0',
+                color: '#9C27B0',
+                borderWidth: 2,
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                '&:hover': {
+                  backgroundColor: 'rgba(156, 39, 176, 0.08)',
+                  borderColor: '#7B1FA2',
+                  color: '#7B1FA2',
+                  transform: 'translateY(-2px)',
+                  boxShadow: '0 4px 12px rgba(156, 39, 176, 0.3)',
+                  borderWidth: 2
+                }
+              }}
             >
-              Save Polygon
+              💾 Save Polygon
             </Button>
           )}
 
@@ -5060,6 +5157,7 @@ Whitefield Sub-POP,13.0358,77.5970,Sub-POP,Active,"Whitefield, Bangalore, Karnat
         
         {/* Second row - Utility buttons */}
         <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 1 }}>
+          {/* Modern Show Boundary Button */}
           <Button 
             variant="outlined" 
             onClick={() => {
@@ -5071,20 +5169,58 @@ Whitefield Sub-POP,13.0358,77.5970,Sub-POP,Active,"Whitefield, Bangalore, Karnat
             }}
             disabled={!loaded}
             startIcon={<MapIcon />}
-            size="small"
+            size="medium"
+            sx={{
+              fontWeight: 'bold',
+              textTransform: 'none',
+              borderRadius: 2.5,
+              py: 1,
+              px: 2.5,
+              borderColor: '#795548',
+              color: '#795548',
+              borderWidth: 2,
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              '&:hover': {
+                backgroundColor: 'rgba(121, 85, 72, 0.08)',
+                borderColor: '#5D4037',
+                color: '#5D4037',
+                transform: 'translateY(-1px)',
+                boxShadow: '0 3px 8px rgba(121, 85, 72, 0.25)',
+                borderWidth: 2
+              }
+            }}
           >
-            Show Boundary
+            🗺️ Show Boundary
           </Button>
           
-          {/* Load saved data */}
+          {/* Modern Load Polygons Button */}
           <Button 
             variant="outlined" 
             onClick={() => { loadSavedPolygons(); setPolygonHistoryDialogOpen(true); }}
             disabled={!loaded}
             startIcon={<History />}
-            size="small"
+            size="medium"
+            sx={{
+              fontWeight: 'bold',
+              textTransform: 'none',
+              borderRadius: 2.5,
+              py: 1,
+              px: 2.5,
+              borderColor: '#607D8B',
+              color: '#607D8B',
+              borderWidth: 2,
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              '&:hover': {
+                backgroundColor: 'rgba(96, 125, 139, 0.08)',
+                borderColor: '#455A64',
+                color: '#455A64',
+                transform: 'translateY(-1px)',
+                boxShadow: '0 3px 8px rgba(96, 125, 139, 0.25)',
+                borderWidth: 2
+              }
+            }}
           >
-            Load Polygons
+            📁 Load Polygons
           </Button>
           
           <Box sx={{ flexGrow: 1 }} />
@@ -5173,264 +5309,587 @@ Whitefield Sub-POP,13.0358,77.5970,Sub-POP,Active,"Whitefield, Bangalore, Karnat
           </Paper>
         </Box>
 
-        {/* Results Panel - Distance */}
+        {/* Modern Results Panel - Distance */}
         {segmentDistances.length > 0 && drawingMode === 'distance' && (
-          <Paper elevation={2} sx={{ width: 400, p: 2 }}>
-            <Typography variant="h6" gutterBottom>
-              Distance Measurement Results
-            </Typography>
-            
-            <Box sx={{ maxHeight: 300, overflow: 'auto', mb: 2 }}>
-              <TableContainer>
-                <Table size="small">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Segment</TableCell>
-                      <TableCell align="right">Distance</TableCell>
-                      <TableCell align="right">Total</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {segmentDistances.map((segment) => (
-                      <TableRow key={segment.id}>
-                        <TableCell>
-                          Point {segment.from} → {segment.to}
-                        </TableCell>
-                        <TableCell align="right" sx={{ fontWeight: 'medium' }}>
-                          {segment.formattedDistance}
-                        </TableCell>
-                        <TableCell align="right" sx={{ color: 'primary.main', fontWeight: 'bold' }}>
-                          {segment.formattedTotalDistance}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
+          <Paper 
+            elevation={3} 
+            sx={{ 
+              width: 420, 
+              borderRadius: 3,
+              background: 'linear-gradient(135deg, #fff 0%, #f8f9fa 100%)',
+              border: '1px solid rgba(33, 150, 243, 0.1)',
+              overflow: 'hidden'
+            }}
+          >
+            <Box sx={{ 
+              p: 2.5, 
+              background: 'linear-gradient(135deg, #2196F3 0%, #1976D2 100%)',
+              color: 'white',
+              display: 'flex',
+              alignItems: 'center'
+            }}>
+              <Timeline sx={{ mr: 1.5, fontSize: 24 }} />
+              <Typography variant="h6" fontWeight="bold">
+                📏 Distance Measurement Results
+              </Typography>
             </Box>
+            
+            <Box sx={{ p: 3 }}>
+            
+              <Box sx={{ maxHeight: 280, overflow: 'auto', mb: 3 }}>
+                <TableContainer>
+                  <Table size="small">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell sx={{ fontWeight: 'bold', color: '#1976D2' }}>Segment</TableCell>
+                        <TableCell align="right" sx={{ fontWeight: 'bold', color: '#1976D2' }}>Distance</TableCell>
+                        <TableCell align="right" sx={{ fontWeight: 'bold', color: '#1976D2' }}>Total</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {segmentDistances.map((segment) => (
+                        <TableRow 
+                          key={segment.id}
+                          sx={{
+                            '&:hover': {
+                              backgroundColor: 'rgba(33, 150, 243, 0.04)'
+                            }
+                          }}
+                        >
+                          <TableCell sx={{ fontWeight: 'medium' }}>
+                            📍 Point {segment.from} → {segment.to}
+                          </TableCell>
+                          <TableCell align="right" sx={{ fontWeight: 'medium', color: '#424242' }}>
+                            {segment.formattedDistance}
+                          </TableCell>
+                          <TableCell align="right" sx={{ color: 'primary.main', fontWeight: 'bold', fontSize: '0.95rem' }}>
+                            {segment.formattedTotalDistance}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </Box>
 
-            <Box sx={{ p: 2, bgcolor: alpha(theme.palette.primary.main, 0.1), borderRadius: 1 }}>
-              <Typography variant="h6" color="primary.main">
-                Total Distance: {formatDistance(totalDistance)}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {points.length} points, {segmentDistances.length} segments
-              </Typography>
+              <Card 
+                elevation={0}
+                sx={{ 
+                  background: 'linear-gradient(135deg, rgba(33, 150, 243, 0.1) 0%, rgba(33, 150, 243, 0.05) 100%)',
+                  border: '2px solid rgba(33, 150, 243, 0.2)',
+                  borderRadius: 2
+                }}
+              >
+                <CardContent sx={{ p: 2.5 }}>
+                  <Typography variant="h6" sx={{ color: '#1976D2', fontWeight: 'bold', mb: 1 }}>
+                    📐 Total Distance: {formatDistance(totalDistance)}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    📊 {points.length} measurement points • {segmentDistances.length} segments
+                  </Typography>
+                </CardContent>
+              </Card>
             </Box>
           </Paper>
         )}
         
-        {/* Results Panel - Polygon */}
+        {/* Modern Results Panel - Polygon */}
         {polygonPoints.length >= 3 && drawingMode === 'polygon' && (
-          <Paper elevation={2} sx={{ width: 400, p: 2 }}>
-            <Typography variant="h6" gutterBottom sx={{ color: '#4CAF50' }}>
-              <SquareFoot sx={{ mr: 1, verticalAlign: 'middle' }} />
-              Polygon Area Results
-            </Typography>
-
-            {/* Edit controls for loaded polygon */}
-            {canEditLoadedPolygon && (
-              <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
-                {!isEditingPolygon ? (
-                  <Button variant="outlined" color="success" onClick={enableEditLoadedPolygon}>
-                    Enable Edit
-                  </Button>
-                ) : (
-                  <>
-                    <Button variant="contained" color="success" onClick={saveEditedPolygon}>
-                      Save Updates
-                    </Button>
-                    <Button variant="outlined" color="inherit" onClick={cancelEditLoadedPolygon}>
-                      Cancel Edit
-                    </Button>
-                  </>
-                )}
-              </Stack>
-            )}
-            
-            <Box sx={{ mb: 2 }}>
-              <Typography variant="body1" gutterBottom>
-                Polygon Points:
+          <Paper 
+            elevation={3} 
+            sx={{ 
+              width: 420, 
+              borderRadius: 3,
+              background: 'linear-gradient(135deg, #fff 0%, #f8f9fa 100%)',
+              border: '1px solid rgba(156, 39, 176, 0.1)',
+              overflow: 'hidden'
+            }}
+          >
+            <Box sx={{ 
+              p: 2.5, 
+              background: 'linear-gradient(135deg, #9C27B0 0%, #7B1FA2 100%)',
+              color: 'white',
+              display: 'flex',
+              alignItems: 'center'
+            }}>
+              <SquareFoot sx={{ mr: 1.5, fontSize: 24 }} />
+              <Typography variant="h6" fontWeight="bold">
+                📐 Polygon Area Results
               </Typography>
-              <Box sx={{ maxHeight: 200, overflow: 'auto' }}>
-                {polygonPoints.map((point, index) => (
-                  <Typography key={index} variant="body2" sx={{ fontFamily: 'monospace', fontSize: '0.8rem' }}>
-                    Point {index + 1}: {point.lat.toFixed(6)}, {point.lng.toFixed(6)}
+            </Box>
+            
+            <Box sx={{ p: 3 }}>
+
+              {/* Edit controls for loaded polygon */}
+              {canEditLoadedPolygon && (
+                <Stack direction="row" spacing={2} sx={{ mb: 3 }}>
+                  {!isEditingPolygon ? (
+                    <Button 
+                      variant="outlined" 
+                      onClick={enableEditLoadedPolygon}
+                      sx={{
+                        fontWeight: 'bold',
+                        textTransform: 'none',
+                        borderRadius: 2,
+                        py: 1,
+                        px: 2.5,
+                        borderColor: '#4CAF50',
+                        color: '#4CAF50',
+                        '&:hover': {
+                          backgroundColor: 'rgba(76, 175, 80, 0.08)',
+                          borderColor: '#2E7D32'
+                        }
+                      }}
+                    >
+                      ✏️ Enable Edit
+                    </Button>
+                  ) : (
+                    <>
+                      <Button 
+                        variant="contained" 
+                        onClick={saveEditedPolygon}
+                        sx={{
+                          fontWeight: 'bold',
+                          textTransform: 'none',
+                          borderRadius: 2,
+                          py: 1,
+                          px: 2.5,
+                          background: 'linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%)',
+                          '&:hover': {
+                            background: 'linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%)'
+                          }
+                        }}
+                      >
+                        💾 Save Updates
+                      </Button>
+                      <Button 
+                        variant="outlined" 
+                        onClick={cancelEditLoadedPolygon}
+                        sx={{
+                          fontWeight: 'bold',
+                          textTransform: 'none',
+                          borderRadius: 2,
+                          py: 1,
+                          px: 2.5,
+                          borderColor: '#757575',
+                          color: '#757575',
+                          '&:hover': {
+                            backgroundColor: 'rgba(117, 117, 117, 0.08)'
+                          }
+                        }}
+                      >
+                        ❌ Cancel Edit
+                      </Button>
+                    </>
+                  )}
+                </Stack>
+              )}
+              
+              <Card elevation={0} sx={{ mb: 3, border: '1px solid #E0E0E0', borderRadius: 2 }}>
+                <CardContent sx={{ p: 2.5 }}>
+                  <Typography variant="subtitle1" fontWeight="bold" gutterBottom sx={{ color: '#7B1FA2' }}>
+                    📍 Polygon Points ({polygonPoints.length})
                   </Typography>
-                ))}
+                  <Box sx={{ maxHeight: 180, overflow: 'auto' }}>
+                    {polygonPoints.map((point, index) => (
+                      <Typography 
+                        key={index} 
+                        variant="body2" 
+                        sx={{ 
+                          fontFamily: 'monospace', 
+                          fontSize: '0.85rem',
+                          mb: 0.5,
+                          p: 0.8,
+                          borderRadius: 1,
+                          bgcolor: index % 2 === 0 ? 'rgba(156, 39, 176, 0.02)' : 'transparent',
+                          '&:hover': {
+                            bgcolor: 'rgba(156, 39, 176, 0.05)'
+                          }
+                        }}
+                      >
+                        Point {index + 1}: {point.lat.toFixed(6)}, {point.lng.toFixed(6)}
+                      </Typography>
+                    ))}
+                  </Box>
+                </CardContent>
+              </Card>
+
+              <Card 
+                elevation={0}
+                sx={{ 
+                  background: 'linear-gradient(135deg, rgba(156, 39, 176, 0.1) 0%, rgba(156, 39, 176, 0.05) 100%)',
+                  border: '2px solid rgba(156, 39, 176, 0.2)',
+                  borderRadius: 2
+                }}
+              >
+                <CardContent sx={{ p: 3 }}>
+                  <Typography variant="h6" sx={{ color: '#7B1FA2', fontWeight: 'bold', mb: 1.5 }}>
+                    📊 Area: {formatArea(polygonArea)}
+                  </Typography>
+                  <Typography variant="h6" sx={{ color: '#7B1FA2', fontWeight: 'bold', mb: 1.5 }}>
+                    📏 Perimeter: {formatDistance(polygonPerimeter)}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    🔢 Total vertices: {polygonPoints.length} points
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Box>
+          </Paper>
+        )}
+        
+        {/* Modern Elevation Sidebar */}
+        {showElevation && (
+          <Paper 
+            elevation={3} 
+            sx={{ 
+              width: 450, 
+              maxHeight: 'calc(100vh - 200px)', 
+              overflow: 'hidden',
+              borderRadius: 3,
+              background: 'linear-gradient(135deg, #fff 0%, #f8f9fa 100%)',
+              border: '1px solid rgba(255, 152, 0, 0.1)'
+            }}
+          >
+            <Box sx={{ 
+              p: 3, 
+              background: 'linear-gradient(135deg, #FF9800 0%, #F57C00 100%)',
+              color: 'white',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between'
+            }}>
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <TrendingUp sx={{ mr: 2, fontSize: 28 }} />
+                <Box>
+                  <Typography variant="h5" fontWeight="bold">
+                    Elevation Profile
+                  </Typography>
+                  <Typography variant="body2" sx={{ opacity: 0.9 }}>
+                    Analyze terrain elevation between two points
+                  </Typography>
+                </Box>
               </Box>
             </Box>
-
-            <Box sx={{ p: 2, bgcolor: alpha('#4CAF50', 0.1), borderRadius: 1 }}>
-              <Typography variant="h6" sx={{ color: '#4CAF50' }}>
-                Total Area: {formatArea(polygonArea)}
-              </Typography>
-              <Typography variant="h6" sx={{ color: '#4CAF50', mt: 1 }}>
-                Perimeter: {formatDistance(polygonPerimeter)}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {polygonPoints.length} points
-              </Typography>
-            </Box>
-          </Paper>
-        )}
-        
-        {/* Elevation Sidebar - Show when elevation mode is active */}
-        {showElevation && (
-          <Paper elevation={2} sx={{ width: 450, p: 2, maxHeight: 'calc(100vh - 200px)', overflow: 'auto' }}>
-            <Typography variant="h6" gutterBottom sx={{ color: '#FF9800' }}>
-              <TrendingUp sx={{ mr: 1, verticalAlign: 'middle' }} />
-              Elevation Profile
-            </Typography>
             
-            {/* Elevation Workflow Steps */}
-            <Paper elevation={1} sx={{ 
-              p: 2, 
-              mb: 2, 
-              bgcolor: isElevationMode ? '#e8f5e8' : '#fff3e0', 
-              borderRadius: 2, 
-              border: isElevationMode ? '1px solid #4CAF50' : '1px solid #FFB74D',
-              transition: 'all 0.3s ease'
-            }}>
-              <Typography variant="subtitle2" gutterBottom sx={{ 
-                color: isElevationMode ? '#4CAF50' : '#FF9800', 
-                fontWeight: 'bold' 
-              }}>
-                {isElevationMode ? '🎯 Click on Map to Select Points' : '📍 Elevation Analysis Steps'}
-              </Typography>
+            <Box sx={{ p: 3, overflow: 'auto', maxHeight: 'calc(100vh - 320px)' }}>
+            
+            {/* Modern Workflow Progress */}
+            <Card 
+              elevation={0}
+              sx={{ 
+                mb: 3, 
+                borderRadius: 2,
+                background: isElevationMode 
+                  ? 'linear-gradient(135deg, #E8F5E8 0%, #C8E6C8 100%)' 
+                  : 'linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%)',
+                border: `2px solid ${isElevationMode ? '#4CAF50' : '#FF9800'}`,
+                transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                transform: isElevationMode ? 'scale(1.02)' : 'scale(1)'
+              }}
+            >
+              <CardContent sx={{ p: 2.5 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                  <Box sx={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: '50%',
+                    background: isElevationMode 
+                      ? 'linear-gradient(135deg, #4CAF50, #2E7D32)' 
+                      : 'linear-gradient(135deg, #FF9800, #F57C00)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    mr: 2,
+                    boxShadow: 3
+                  }}>
+                    {isElevationMode ? 
+                      <Typography sx={{ fontSize: '1.5rem' }}>🎯</Typography> : 
+                      <Typography sx={{ fontSize: '1.5rem' }}>📍</Typography>
+                    }
+                  </Box>
+                  <Box>
+                    <Typography variant="h6" fontWeight="bold" sx={{ 
+                      color: isElevationMode ? '#2E7D32' : '#E65100',
+                      mb: 0.5
+                    }}>
+                      {isElevationMode ? 'Ready to Select Points!' : 'Elevation Analysis'}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {isElevationMode 
+                        ? 'Click anywhere on the map to place elevation points' 
+                        : 'Follow these steps to analyze elevation'}
+                    </Typography>
+                  </Box>
+                </Box>
               
-              <Stack spacing={1}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Stack spacing={2}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, position: 'relative' }}>
                   <Box sx={{ 
-                    width: 24, 
-                    height: 24, 
+                    width: 32, 
+                    height: 32, 
                     borderRadius: '50%', 
-                    bgcolor: elevationPoints.length >= 1 ? '#4CAF50' : '#E0E0E0',
+                    background: elevationPoints.length >= 1 
+                      ? 'linear-gradient(135deg, #4CAF50, #2E7D32)' 
+                      : 'linear-gradient(135deg, #E0E0E0, #BDBDBD)',
                     color: 'white',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    fontSize: '12px',
-                    fontWeight: 'bold'
+                    fontSize: '14px',
+                    fontWeight: 'bold',
+                    boxShadow: elevationPoints.length >= 1 ? 3 : 1,
+                    transition: 'all 0.3s ease',
+                    border: '3px solid white'
                   }}>
-                    1
+                    {elevationPoints.length >= 1 ? '✓' : '1'}
                   </Box>
-                  <Typography variant="body2" sx={{ 
-                    color: elevationPoints.length >= 1 ? '#4CAF50' : '#666',
-                    fontWeight: elevationPoints.length >= 1 ? 'bold' : 'normal'
-                  }}>
-                    Select first point on map
-                  </Typography>
+                  <Box sx={{ flex: 1 }}>
+                    <Typography variant="body1" sx={{ 
+                      color: elevationPoints.length >= 1 ? '#2E7D32' : '#666',
+                      fontWeight: elevationPoints.length >= 1 ? 'bold' : 'normal',
+                      mb: 0.5
+                    }}>
+                      Select First Point
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      Click anywhere on the map to place your first elevation marker
+                    </Typography>
+                  </Box>
                   {elevationPoints.length >= 1 && (
-                    <Typography variant="caption" sx={{ color: '#4CAF50', ml: 'auto' }}>✓</Typography>
+                    <Chip 
+                      size="small" 
+                      label="Complete" 
+                      color="success"
+                      variant="outlined"
+                      sx={{ 
+                        fontWeight: 'bold',
+                        animation: 'fadeIn 0.5s ease-in'
+                      }}
+                    />
                   )}
                 </Box>
                 
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, position: 'relative' }}>
+                  {elevationPoints.length >= 1 && (
+                    <Box sx={{
+                      position: 'absolute',
+                      left: 15,
+                      top: -16,
+                      width: 2,
+                      height: 16,
+                      background: elevationPoints.length >= 2 
+                        ? 'linear-gradient(to bottom, #4CAF50, #2E7D32)' 
+                        : 'linear-gradient(to bottom, #E0E0E0, #BDBDBD)',
+                      borderRadius: 1
+                    }} />
+                  )}
                   <Box sx={{ 
-                    width: 24, 
-                    height: 24, 
+                    width: 32, 
+                    height: 32, 
                     borderRadius: '50%', 
-                    bgcolor: elevationPoints.length >= 2 ? '#4CAF50' : '#E0E0E0',
+                    background: elevationPoints.length >= 2 
+                      ? 'linear-gradient(135deg, #4CAF50, #2E7D32)' 
+                      : 'linear-gradient(135deg, #E0E0E0, #BDBDBD)',
                     color: 'white',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    fontSize: '12px',
-                    fontWeight: 'bold'
+                    fontSize: '14px',
+                    fontWeight: 'bold',
+                    boxShadow: elevationPoints.length >= 2 ? 3 : 1,
+                    transition: 'all 0.3s ease',
+                    border: '3px solid white'
                   }}>
-                    2
+                    {elevationPoints.length >= 2 ? '✓' : '2'}
                   </Box>
-                  <Typography variant="body2" sx={{ 
-                    color: elevationPoints.length >= 2 ? '#4CAF50' : '#666',
-                    fontWeight: elevationPoints.length >= 2 ? 'bold' : 'normal'
-                  }}>
-                    Select second point on map
-                  </Typography>
+                  <Box sx={{ flex: 1 }}>
+                    <Typography variant="body1" sx={{ 
+                      color: elevationPoints.length >= 2 ? '#2E7D32' : '#666',
+                      fontWeight: elevationPoints.length >= 2 ? 'bold' : 'normal',
+                      mb: 0.5
+                    }}>
+                      Select Second Point
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      Place your second marker to create the elevation profile path
+                    </Typography>
+                  </Box>
                   {elevationPoints.length >= 2 && (
-                    <Typography variant="caption" sx={{ color: '#4CAF50', ml: 'auto' }}>✓</Typography>
+                    <Chip 
+                      size="small" 
+                      label="Complete" 
+                      color="success"
+                      variant="outlined"
+                      sx={{ 
+                        fontWeight: 'bold',
+                        animation: 'fadeIn 0.5s ease-in'
+                      }}
+                    />
                   )}
                 </Box>
                 
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, position: 'relative' }}>
+                  {elevationPoints.length >= 2 && (
+                    <Box sx={{
+                      position: 'absolute',
+                      left: 15,
+                      top: -16,
+                      width: 2,
+                      height: 16,
+                      background: elevationData.length > 0 
+                        ? 'linear-gradient(to bottom, #4CAF50, #2E7D32)' 
+                        : 'linear-gradient(to bottom, #E0E0E0, #BDBDBD)',
+                      borderRadius: 1
+                    }} />
+                  )}
                   <Box sx={{ 
-                    width: 24, 
-                    height: 24, 
+                    width: 32, 
+                    height: 32, 
                     borderRadius: '50%', 
-                    bgcolor: elevationData.length > 0 ? '#4CAF50' : '#E0E0E0',
+                    background: elevationData.length > 0 
+                      ? 'linear-gradient(135deg, #4CAF50, #2E7D32)' 
+                      : 'linear-gradient(135deg, #E0E0E0, #BDBDBD)',
                     color: 'white',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    fontSize: '12px',
-                    fontWeight: 'bold'
+                    fontSize: '14px',
+                    fontWeight: 'bold',
+                    boxShadow: elevationData.length > 0 ? 3 : 1,
+                    transition: 'all 0.3s ease',
+                    border: '3px solid white'
                   }}>
-                    3
+                    {elevationData.length > 0 ? '✓' : '3'}
                   </Box>
-                  <Typography variant="body2" sx={{ 
-                    color: elevationData.length > 0 ? '#4CAF50' : '#666',
-                    fontWeight: elevationData.length > 0 ? 'bold' : 'normal'
-                  }}>
-                    Get elevation data
-                  </Typography>
+                  <Box sx={{ flex: 1 }}>
+                    <Typography variant="body1" sx={{ 
+                      color: elevationData.length > 0 ? '#2E7D32' : '#666',
+                      fontWeight: elevationData.length > 0 ? 'bold' : 'normal',
+                      mb: 0.5
+                    }}>
+                      Analyze Elevation
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      Generate detailed elevation profile and statistics
+                    </Typography>
+                  </Box>
                   {elevationData.length > 0 && (
-                    <Typography variant="caption" sx={{ color: '#4CAF50', ml: 'auto' }}>✓</Typography>
+                    <Chip 
+                      size="small" 
+                      label="Complete" 
+                      color="success"
+                      variant="outlined"
+                      sx={{ 
+                        fontWeight: 'bold',
+                        animation: 'fadeIn 0.5s ease-in'
+                      }}
+                    />
                   )}
                 </Box>
               </Stack>
-            </Paper>
+              </CardContent>
+            </Card>
             
-            {/* Selected Points Display */}
+            {/* Modern Selected Points Display */}
             {elevationPoints.length > 0 && (
-              <Paper elevation={1} sx={{ p: 2, mb: 2, bgcolor: '#f8f9fa', borderRadius: 2 }}>
-                <Typography variant="subtitle2" gutterBottom sx={{ color: '#FF9800', fontWeight: 'bold' }}>
-                  📌 Selected Points
-                </Typography>
-                
-                <Stack spacing={1}>
-                  {elevationPoints.map((point, index) => (
-                    <Box key={index} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <Box sx={{ 
-                        width: 20, 
-                        height: 20, 
-                        borderRadius: '50%', 
-                        bgcolor: index === 0 ? '#4CAF50' : '#FF5722',
-                        color: 'white',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '12px',
-                        fontWeight: 'bold'
-                      }}>
-                        {index + 1}
-                      </Box>
-                      <Typography variant="body2" sx={{ fontFamily: 'monospace' }}>
-                        {point.lat.toFixed(6)}, {point.lng.toFixed(6)}
-                      </Typography>
-                      {pointElevations[`point${index + 1}`] ? (
-                        <Typography variant="caption" sx={{ 
-                          ml: 'auto', 
-                          bgcolor: index === 0 ? '#E8F5E8' : '#FFEBEE',
-                          color: index === 0 ? '#2E7D32' : '#C62828',
-                          px: 1, 
-                          py: 0.5, 
-                          borderRadius: 1,
-                          fontWeight: 'bold',
-                          border: `1px solid ${index === 0 ? '#4CAF50' : '#F44336'}`,
-                          animation: 'fadeIn 0.5s ease-in'
-                        }}>
-                          📍 {pointElevations[`point${index + 1}`].formatted}
-                        </Typography>
-                      ) : (
-                        <Typography variant="caption" sx={{ 
-                          ml: 'auto', 
-                          color: '#999',
-                          fontStyle: 'italic'
-                        }}>
-                          Click to get elevation
-                        </Typography>
-                      )}
+              <Card 
+                elevation={2}
+                sx={{ 
+                  mb: 3, 
+                  borderRadius: 2,
+                  background: 'linear-gradient(135deg, #F8F9FA 0%, #E9ECEF 100%)',
+                  border: '1px solid rgba(255, 152, 0, 0.2)'
+                }}
+              >
+                <CardContent sx={{ p: 3 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                    <Box sx={{
+                      width: 36,
+                      height: 36,
+                      borderRadius: '50%',
+                      background: 'linear-gradient(135deg, #FF9800, #F57C00)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      mr: 2,
+                      boxShadow: 2
+                    }}>
+                      <Typography sx={{ fontSize: '1.2rem' }}>📌</Typography>
                     </Box>
+                    <Typography variant="h6" fontWeight="bold" sx={{ color: '#E65100' }}>
+                      Selected Points ({elevationPoints.length}/2)
+                    </Typography>
+                  </Box>
+                
+                <Stack spacing={2}>
+                  {elevationPoints.map((point, index) => (
+                    <Card key={index} elevation={1} sx={{ 
+                      p: 2, 
+                      borderRadius: 2,
+                      border: `2px solid ${index === 0 ? '#4CAF50' : '#FF5722'}`,
+                      background: `linear-gradient(135deg, ${index === 0 ? '#E8F5E8' : '#FFEBEE'} 0%, ${index === 0 ? '#F1F8E9' : '#FFCDD2'} 100%)`,
+                      transition: 'all 0.3s ease',
+                      '&:hover': {
+                        transform: 'translateY(-2px)',
+                        boxShadow: 3
+                      }
+                    }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                        <Box sx={{ 
+                          width: 32, 
+                          height: 32, 
+                          borderRadius: '50%', 
+                          background: `linear-gradient(135deg, ${index === 0 ? '#4CAF50' : '#FF5722'}, ${index === 0 ? '#2E7D32' : '#D32F2F'})`,
+                          color: 'white',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '16px',
+                          fontWeight: 'bold',
+                          boxShadow: 2
+                        }}>
+                          {index + 1}
+                        </Box>
+                        <Box sx={{ flex: 1 }}>
+                          <Typography variant="body1" fontWeight="bold" sx={{ 
+                            color: index === 0 ? '#2E7D32' : '#D32F2F',
+                            mb: 0.5
+                          }}>
+                            Point {index + 1}
+                          </Typography>
+                          <Typography variant="body2" sx={{ 
+                            fontFamily: 'monospace',
+                            color: '#666',
+                            fontSize: '0.9rem'
+                          }}>
+                            {point.lat.toFixed(6)}, {point.lng.toFixed(6)}
+                          </Typography>
+                        </Box>
+                        {pointElevations[`point${index + 1}`] ? (
+                          <Chip
+                            label={pointElevations[`point${index + 1}`].formatted}
+                            color={index === 0 ? 'success' : 'error'}
+                            variant="filled"
+                            sx={{ 
+                              fontWeight: 'bold',
+                              fontSize: '0.8rem',
+                              animation: 'fadeIn 0.5s ease-in'
+                            }}
+                          />
+                        ) : (
+                          <Chip
+                            label="Pending"
+                            variant="outlined"
+                            size="small"
+                            sx={{ 
+                              color: '#999',
+                              borderColor: '#E0E0E0'
+                            }}
+                          />
+                        )}
+                      </Box>
+                    </Card>
                   ))}
                   
                   {elevationPoints.length === 2 && (
@@ -5481,182 +5940,266 @@ Whitefield Sub-POP,13.0358,77.5970,Sub-POP,Active,"Whitefield, Bangalore, Karnat
                     </Box>
                   )}
                 </Stack>
-              </Paper>
+                </CardContent>
+              </Card>
             )}
             
-            {/* Get Elevation Data Button with enhanced animations */}
-            {elevationPoints.length === 2 && elevationData.length === 0 && (
-              <Box sx={{ mb: 2 }}>
+            {/* Modern Action Buttons */}
+            <Stack spacing={2} sx={{ mb: 3 }}>
+              {/* Get Elevation Data Button */}
+              {elevationPoints.length === 2 && elevationData.length === 0 && (
                 <Button 
                   variant="contained" 
+                  size="large"
                   onClick={getElevationForTwoPoints}
                   startIcon={<TrendingUp />}
                   sx={{ 
-                    width: '100%',
                     background: 'linear-gradient(135deg, #FF9800 0%, #F57C00 100%)',
                     color: 'white',
                     '&:hover': {
                       background: 'linear-gradient(135deg, #F57C00 0%, #E65100 100%)',
+                      transform: 'translateY(-3px)',
+                      boxShadow: '0 8px 25px rgba(245, 124, 0, 0.4)'
+                    },
+                    textTransform: 'none',
+                    py: 2,
+                    fontWeight: 'bold',
+                    fontSize: '1.1rem',
+                    borderRadius: 3,
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                    boxShadow: '0 4px 15px rgba(245, 124, 0, 0.3)',
+                    animation: 'pulse 2s ease-in-out infinite'
+                  }}
+                >
+                  🏔️ Analyze Elevation Profile
+                </Button>
+              )}
+              
+              {/* Clear Points Button */}
+              {elevationPoints.length > 0 && (
+                <Button 
+                  variant="outlined" 
+                  size="large"
+                  onClick={clearElevationPoints}
+                  startIcon={<Clear />}
+                  sx={{ 
+                    borderColor: '#FF9800',
+                    color: '#FF9800',
+                    '&:hover': {
+                      borderColor: '#F57C00',
+                      backgroundColor: 'rgba(255, 152, 0, 0.08)',
                       transform: 'translateY(-2px)',
-                      boxShadow: '0 4px 12px rgba(245, 124, 0, 0.4)'
+                      boxShadow: '0 4px 12px rgba(255, 152, 0, 0.2)'
                     },
                     textTransform: 'none',
                     py: 1.5,
                     fontWeight: 'bold',
-                    fontSize: '1.1rem',
-                    borderRadius: 2,
-                    transition: 'all 0.3s ease',
-                    animation: 'pulse 2s ease-in-out infinite'
+                    borderRadius: 3,
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                    borderWidth: 2
                   }}
                 >
-                  🏔️ Get Elevation Profile
+                  🧹 Clear All Points
                 </Button>
-                <Typography variant="caption" sx={{ 
-                  display: 'block', 
-                  textAlign: 'center', 
-                  color: '#666', 
-                  mt: 1,
-                  fontStyle: 'italic'
-                }}>
-                  Ready to analyze elevation between your selected points
-                </Typography>
-              </Box>
-            )}
+              )}
+              
+              {/* Clear All Elevation Data Button - NEW */}
+              {(elevationData.length > 0 || elevationPoints.length > 0) && (
+                <Button 
+                  variant="outlined" 
+                  size="large"
+                  onClick={() => {
+                    // Clear all elevation data, points, markers, and polylines
+                    clearElevationPoints();
+                    clearElevationData();
+                    addNotification('🗑️ All elevation data and markers cleared from map', 'info');
+                  }}
+                  startIcon={<Delete />}
+                  sx={{ 
+                    borderColor: '#d32f2f',
+                    color: '#d32f2f',
+                    '&:hover': {
+                      borderColor: '#b71c1c',
+                      backgroundColor: 'rgba(211, 47, 47, 0.08)',
+                      transform: 'translateY(-2px)',
+                      boxShadow: '0 4px 12px rgba(211, 47, 47, 0.2)'
+                    },
+                    textTransform: 'none',
+                    py: 1.5,
+                    fontWeight: 'bold',
+                    borderRadius: 3,
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                    borderWidth: 2
+                  }}
+                >
+                  🗑️ Clear All Elevation Data
+                </Button>
+              )}
+            </Stack>
             
-            {/* Clear Points Button */}
-            {elevationPoints.length > 0 && (
-              <Button 
-                variant="outlined" 
-                onClick={clearElevationPoints}
-                startIcon={<Clear />}
-                sx={{ 
-                  mb: 2,
-                  width: '100%',
-                  borderColor: '#FF9800',
-                  color: '#FF9800',
-                  '&:hover': {
-                    borderColor: '#F57C00',
-                    backgroundColor: 'rgba(255, 152, 0, 0.04)'
-                  },
-                  textTransform: 'none'
-                }}
-              >
-                Clear Points
-              </Button>
-            )}
-            
-            {/* Elevation Statistics */}
+            {/* Modern Elevation Results */}
             {elevationData.length > 0 && (
               <>
-              <Paper elevation={1} sx={{ p: 2, mb: 2, bgcolor: alpha('#FF9800', 0.1), borderRadius: 1 }}>
-                <Typography variant="subtitle2" gutterBottom sx={{ color: '#FF9800', fontWeight: 'bold' }}>
-                  📈 Elevation Statistics
-                </Typography>
-                <Grid container spacing={2}>
-                  <Grid item xs={6}>
-                    <Typography variant="body2">
-                      <strong>Max Elevation:</strong> {elevationStats.maxElevation}m
-                    </Typography>
-                    <Typography variant="body2">
-                      <strong>Min Elevation:</strong> {elevationStats.minElevation}m
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={6}>
-                    <Typography variant="body2">
-                      <strong>Avg Elevation:</strong> {elevationStats.avgElevation}m
-                    </Typography>
-                    <Typography variant="body2">
-                      <strong>Elevation Gain:</strong> +{elevationStats.totalElevationGain}m
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={12}>
-                    <Typography variant="body2">
-                      <strong>Elevation Loss:</strong> -{elevationStats.totalElevationLoss}m
-                    </Typography>
-                    <Typography variant="body2">
-                      <strong>Data Points:</strong> {elevationData.length}
-                    </Typography>
-                  </Grid>
-                </Grid>
-              </Paper>
-            
-              {/* Elevation Chart */}
-              <Paper elevation={1} sx={{ p: 2, mb: 2, bgcolor: '#fff', borderRadius: 1 }}>
-                <Typography variant="subtitle2" gutterBottom sx={{ color: '#FF9800', fontWeight: 'bold' }}>
-                  📊 Elevation Chart
-                </Typography>
-                <Box sx={{ height: 300, position: 'relative' }}>
-                  <canvas 
-                    ref={elevationChartRef}
-                    style={{ 
-                      width: '100%', 
-                      height: '100%',
-                      borderRadius: '4px',
-                      border: '1px solid #e0e0e0'
-                    }}
-                  />
-                </Box>
-              </Paper>
-            
-              {/* High/Low Points Info */}
-              <Paper elevation={1} sx={{ p: 2, bgcolor: '#f8f9fa', borderRadius: 1 }}>
-                <Typography variant="subtitle2" gutterBottom sx={{ color: '#FF9800', fontWeight: 'bold' }}>
-                  🎯 Notable Points
-                </Typography>
-                <Stack spacing={1}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Box sx={{ 
-                      width: 12, 
-                      height: 12, 
-                      borderRadius: '50%', 
-                      bgcolor: '#FF5722',
-                      border: '2px solid white',
-                      boxShadow: 1
-                    }} />
-                    <Typography variant="body2">
-                      <strong>Highest Point:</strong> {elevationStats.maxElevation}m
+              <Card elevation={3} sx={{ 
+                mb: 3, 
+                borderRadius: 3,
+                background: 'linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%)',
+                border: '2px solid #FF9800',
+                overflow: 'hidden'
+              }}>
+                <CardContent sx={{ p: 0 }}>
+                  <Box sx={{
+                    p: 2,
+                    background: 'linear-gradient(135deg, #FF9800, #F57C00)',
+                    color: 'white',
+                    display: 'flex',
+                    alignItems: 'center'
+                  }}>
+                    <Box sx={{
+                      width: 36,
+                      height: 36,
+                      borderRadius: '50%',
+                      background: 'rgba(255, 255, 255, 0.2)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      mr: 2
+                    }}>
+                      <Typography sx={{ fontSize: '1.2rem' }}>📈</Typography>
+                    </Box>
+                    <Typography variant="h6" fontWeight="bold">
+                      Elevation Analysis Results
                     </Typography>
                   </Box>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  
+                  <Box sx={{ p: 3 }}>
+                    <Grid container spacing={3}>
+                      <Grid item xs={6}>
+                        <Box sx={{ textAlign: 'center', p: 2, borderRadius: 2, bgcolor: 'rgba(76, 175, 80, 0.1)' }}>
+                          <Typography variant="h4" sx={{ color: '#4CAF50', fontWeight: 'bold', mb: 1 }}>
+                            {elevationStats.maxElevation}m
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary" fontWeight="bold">
+                            🏔️ Highest Point
+                          </Typography>
+                        </Box>
+                      </Grid>
+                      <Grid item xs={6}>
+                        <Box sx={{ textAlign: 'center', p: 2, borderRadius: 2, bgcolor: 'rgba(33, 150, 243, 0.1)' }}>
+                          <Typography variant="h4" sx={{ color: '#2196F3', fontWeight: 'bold', mb: 1 }}>
+                            {elevationStats.minElevation}m
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary" fontWeight="bold">
+                            🌊 Lowest Point
+                          </Typography>
+                        </Box>
+                      </Grid>
+                      <Grid item xs={4}>
+                        <Box sx={{ textAlign: 'center', p: 2, borderRadius: 2, bgcolor: 'rgba(255, 152, 0, 0.1)' }}>
+                          <Typography variant="h6" sx={{ color: '#FF9800', fontWeight: 'bold', mb: 1 }}>
+                            {elevationStats.avgElevation}m
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary" fontWeight="bold">
+                            ⚖️ Average
+                          </Typography>
+                        </Box>
+                      </Grid>
+                      <Grid item xs={4}>
+                        <Box sx={{ textAlign: 'center', p: 2, borderRadius: 2, bgcolor: 'rgba(76, 175, 80, 0.1)' }}>
+                          <Typography variant="h6" sx={{ color: '#4CAF50', fontWeight: 'bold', mb: 1 }}>
+                            +{elevationStats.totalElevationGain}m
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary" fontWeight="bold">
+                            ⬆️ Gain
+                          </Typography>
+                        </Box>
+                      </Grid>
+                      <Grid item xs={4}>
+                        <Box sx={{ textAlign: 'center', p: 2, borderRadius: 2, bgcolor: 'rgba(244, 67, 54, 0.1)' }}>
+                          <Typography variant="h6" sx={{ color: '#F44336', fontWeight: 'bold', mb: 1 }}>
+                            -{elevationStats.totalElevationLoss}m
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary" fontWeight="bold">
+                            ⬇️ Loss
+                          </Typography>
+                        </Box>
+                      </Grid>
+                    </Grid>
+                  </Box>
+                </CardContent>
+              </Card>
+            
+              {/* Modern Elevation Chart */}
+              <Card elevation={3} sx={{ 
+                mb: 3, 
+                borderRadius: 3,
+                background: 'linear-gradient(135deg, #FFFFFF 0%, #F8F9FA 100%)',
+                border: '1px solid rgba(0, 0, 0, 0.08)',
+                overflow: 'hidden'
+              }}>
+                <CardContent sx={{ p: 0 }}>
+                  <Box sx={{
+                    p: 2,
+                    background: 'linear-gradient(135deg, #2196F3, #1976D2)',
+                    color: 'white',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between'
+                  }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <Box sx={{
+                        width: 32,
+                        height: 32,
+                        borderRadius: '50%',
+                        background: 'rgba(255, 255, 255, 0.2)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        mr: 2
+                      }}>
+                        <Typography sx={{ fontSize: '1.1rem' }}>📊</Typography>
+                      </Box>
+                      <Typography variant="h6" fontWeight="bold">
+                        Interactive Elevation Profile
+                      </Typography>
+                    </Box>
+                  </Box>
+                  
+                  <Box sx={{ p: 3 }}>
                     <Box sx={{ 
-                      width: 12, 
-                      height: 12, 
-                      borderRadius: '50%', 
-                      bgcolor: '#4CAF50',
-                      border: '2px solid white',
-                      boxShadow: 1
-                    }} />
-                    <Typography variant="body2">
-                      <strong>Lowest Point:</strong> {elevationStats.minElevation}m
+                      height: 320, 
+                      position: 'relative',
+                      borderRadius: 2,
+                      border: '2px solid #E3F2FD',
+                      background: 'linear-gradient(135deg, #FAFAFA 0%, #FFFFFF 100%)',
+                      overflow: 'hidden',
+                      boxShadow: 'inset 0 2px 4px rgba(0, 0, 0, 0.06)'
+                    }}>
+                      <canvas 
+                        ref={elevationChartRef}
+                        style={{ 
+                          width: '100%', 
+                          height: '100%',
+                          borderRadius: '6px'
+                        }}
+                      />
+                    </Box>
+                    <Typography variant="caption" sx={{ 
+                      display: 'block', 
+                      textAlign: 'center', 
+                      color: '#666', 
+                      mt: 2,
+                      fontStyle: 'italic'
+                    }}>
+                      📍 Hover over the chart to see detailed elevation data at specific points
                     </Typography>
                   </Box>
-                  <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
-                    💡 Click the colored markers on the map to see detailed elevation information
-                  </Typography>
-                </Stack>
-              </Paper>
-              
-              {/* Refresh Button */}
-              <Button 
-                variant="outlined" 
-                onClick={getElevationForTwoPoints}
-                disabled={elevationPoints.length < 2}
-                startIcon={<TrendingUp />}
-                sx={{ 
-                  mt: 2,
-                  width: '100%',
-                  borderColor: '#FF9800',
-                  color: '#FF9800',
-                  '&:hover': {
-                    borderColor: '#F57C00',
-                    backgroundColor: 'rgba(255, 152, 0, 0.04)'
-                  }
-                }}
-              >
-                Refresh Elevation Data
-              </Button>
+                </CardContent>
+              </Card>
+            
               </>
             )}
+            </Box>
           </Paper>
         )}
         
@@ -6277,9 +6820,10 @@ Whitefield Sub-POP,13.0358,77.5970,Sub-POP,Active,"Whitefield, Bangalore, Karnat
               <Button
                 variant={isAddingLocation === 'pop' ? 'contained' : 'outlined'}
                 startIcon={<Apartment sx={{ color: isAddingLocation === 'pop' ? 'white' : '#FF6B35' }} />}
+                size="large"
                 onClick={() => {
                   if (isAddingLocation === 'pop') {
-                    addLog('🚫 Cancelling POP add mode');
+                    addLog('🚑 Cancelling POP add mode');
                     setIsAddingLocation(false);
                     map?.setOptions({ cursor: 'default' });
                     addNotification('Cancelled adding POP location', 'info');
@@ -6295,28 +6839,46 @@ Whitefield Sub-POP,13.0358,77.5970,Sub-POP,Active,"Whitefield, Bangalore, Karnat
                   }
                 }}
                 sx={{ 
-                  justifyContent: 'flex-start',
+                  fontWeight: 'bold',
                   textTransform: 'none',
-                  borderRadius: 2,
-                  py: 1.5,
-                  borderColor: '#FF6B35',
-                  color: isAddingLocation === 'pop' ? 'white' : '#FF6B35',
-                  backgroundColor: isAddingLocation === 'pop' ? '#FF6B35' : 'transparent',
-                  '&:hover': { 
-                    borderColor: '#E55A2B', 
-                    bgcolor: isAddingLocation === 'pop' ? '#E55A2B' : 'rgba(255, 107, 53, 0.04)' 
-                  }
+                  borderRadius: 3,
+                  py: 1.8,
+                  px: 3,
+                  justifyContent: 'flex-start',
+                  ...(isAddingLocation === 'pop' ? {
+                    background: 'linear-gradient(135deg, #FF6B35 0%, #E55A2B 100%)',
+                    color: 'white',
+                    boxShadow: '0 6px 20px rgba(255, 107, 53, 0.4)',
+                    '&:hover': {
+                      background: 'linear-gradient(135deg, #E55A2B 0%, #D84315 100%)',
+                      transform: 'translateY(-2px)',
+                      boxShadow: '0 8px 25px rgba(255, 107, 53, 0.5)'
+                    }
+                  } : {
+                    borderColor: '#FF6B35',
+                    color: '#FF6B35',
+                    borderWidth: 2,
+                    '&:hover': {
+                      backgroundColor: 'rgba(255, 107, 53, 0.08)',
+                      borderColor: '#E55A2B',
+                      transform: 'translateY(-2px)',
+                      boxShadow: '0 4px 12px rgba(255, 107, 53, 0.3)',
+                      borderWidth: 2
+                    }
+                  }),
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
                 }}
               >
-                {isAddingLocation === 'pop' ? 'Cancel Adding POP' : 'Add POP Location'}
+                {isAddingLocation === 'pop' ? '🚑 Cancel Adding POP' : '🏗️ Add POP Location'}
               </Button>
               
               <Button
                 variant={isAddingLocation === 'sub' ? 'contained' : 'outlined'}
                 startIcon={<Store sx={{ color: isAddingLocation === 'sub' ? 'white' : '#4CAF50' }} />}
+                size="large"
                 onClick={() => {
                   if (isAddingLocation === 'sub') {
-                    addLog('🚫 Cancelling Sub-POP add mode');
+                    addLog('🚑 Cancelling Sub-POP add mode');
                     setIsAddingLocation(false);
                     map?.setOptions({ cursor: 'default' });
                     addNotification('Cancelled adding Sub-POP location', 'info');
@@ -6332,26 +6894,43 @@ Whitefield Sub-POP,13.0358,77.5970,Sub-POP,Active,"Whitefield, Bangalore, Karnat
                   }
                 }}
                 sx={{ 
-                  justifyContent: 'flex-start',
+                  fontWeight: 'bold',
                   textTransform: 'none',
-                  borderRadius: 2,
-                  py: 1.5,
-                  borderColor: '#4CAF50',
-                  color: isAddingLocation === 'sub' ? 'white' : '#4CAF50',
-                  backgroundColor: isAddingLocation === 'sub' ? '#4CAF50' : 'transparent',
-                  '&:hover': { 
-                    borderColor: '#45A049', 
-                    bgcolor: isAddingLocation === 'sub' ? '#45A049' : 'rgba(76, 175, 80, 0.04)' 
-                  }
+                  borderRadius: 3,
+                  py: 1.8,
+                  px: 3,
+                  justifyContent: 'flex-start',
+                  ...(isAddingLocation === 'sub' ? {
+                    background: 'linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%)',
+                    color: 'white',
+                    boxShadow: '0 6px 20px rgba(76, 175, 80, 0.4)',
+                    '&:hover': {
+                      background: 'linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%)',
+                      transform: 'translateY(-2px)',
+                      boxShadow: '0 8px 25px rgba(76, 175, 80, 0.5)'
+                    }
+                  } : {
+                    borderColor: '#4CAF50',
+                    color: '#4CAF50',
+                    borderWidth: 2,
+                    '&:hover': {
+                      backgroundColor: 'rgba(76, 175, 80, 0.08)',
+                      borderColor: '#2E7D32',
+                      transform: 'translateY(-2px)',
+                      boxShadow: '0 4px 12px rgba(76, 175, 80, 0.3)',
+                      borderWidth: 2
+                    }
+                  }),
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
                 }}
               >
-                {isAddingLocation === 'sub' ? 'Cancel Adding Sub-POP' : 'Add Sub-POP Location'}
+                {isAddingLocation === 'sub' ? '🚑 Cancel Adding Sub-POP' : '🏬 Add Sub-POP Location'}
               </Button>
               
               <Button
                 variant="outlined"
-                color="error"
                 startIcon={<Clear />}
+                size="large"
                 onClick={() => {
                   // Clear POP layer
                   if (popKmlLayer && popKmlLayer.markers) {
@@ -6393,13 +6972,27 @@ Whitefield Sub-POP,13.0358,77.5970,Sub-POP,Active,"Whitefield, Bangalore, Karnat
                   addNotification('All infrastructure layers cleared', 'success');
                 }}
                 sx={{ 
-                  justifyContent: 'flex-start',
+                  fontWeight: 'bold',
                   textTransform: 'none',
-                  borderRadius: 2,
-                  py: 1.5
+                  borderRadius: 3,
+                  py: 1.8,
+                  px: 3,
+                  justifyContent: 'flex-start',
+                  borderColor: '#F44336',
+                  color: '#F44336',
+                  borderWidth: 2,
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                  '&:hover': {
+                    backgroundColor: 'rgba(244, 67, 54, 0.08)',
+                    borderColor: '#D32F2F',
+                    color: '#D32F2F',
+                    transform: 'translateY(-2px)',
+                    boxShadow: '0 4px 12px rgba(244, 67, 54, 0.3)',
+                    borderWidth: 2
+                  }
                 }}
               >
-                Clear All Layers
+                🗑️ Clear All Layers
               </Button>
             </Stack>
             
@@ -6436,9 +7029,45 @@ Whitefield Sub-POP,13.0358,77.5970,Sub-POP,Active,"Whitefield, Bangalore, Karnat
             placeholder={`Measurement ${Date.now()}`}
           />
         </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setSaveDialogOpen(false)}>Cancel</Button>
-          <Button onClick={saveMeasurement} variant="contained">Save</Button>
+        <DialogActions sx={{ p: 2.5, gap: 1.5 }}>
+          <Button 
+            onClick={() => setSaveDialogOpen(false)}
+            variant="outlined"
+            sx={{
+              fontWeight: 'bold',
+              textTransform: 'none',
+              borderRadius: 2.5,
+              py: 1.5,
+              px: 3,
+              borderColor: '#757575',
+              color: '#757575',
+              '&:hover': {
+                backgroundColor: 'rgba(117, 117, 117, 0.08)',
+                borderColor: '#616161'
+              }
+            }}
+          >
+            Cancel
+          </Button>
+          <Button 
+            onClick={saveMeasurement} 
+            variant="contained"
+            sx={{
+              fontWeight: 'bold',
+              textTransform: 'none',
+              borderRadius: 2.5,
+              py: 1.5,
+              px: 3,
+              background: 'linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%)',
+              '&:hover': {
+                background: 'linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%)',
+                transform: 'translateY(-1px)',
+                boxShadow: '0 6px 16px rgba(76, 175, 80, 0.3)'
+              }
+            }}
+          >
+            💾 Save
+          </Button>
         </DialogActions>
       </Dialog>
       
@@ -6487,8 +7116,23 @@ Whitefield Sub-POP,13.0358,77.5970,Sub-POP,Active,"Whitefield, Bangalore, Karnat
                           size="small"
                           variant="outlined"
                           onClick={() => loadMeasurement(measurement)}
+                          sx={{
+                            fontWeight: 'bold',
+                            textTransform: 'none',
+                            borderRadius: 2,
+                            py: 0.8,
+                            px: 2,
+                            borderColor: '#2196F3',
+                            color: '#2196F3',
+                            '&:hover': {
+                              backgroundColor: 'rgba(33, 150, 243, 0.08)',
+                              borderColor: '#1976D2',
+                              transform: 'translateY(-1px)',
+                              boxShadow: '0 2px 8px rgba(33, 150, 243, 0.25)'
+                            }
+                          }}
                         >
-                          Load
+                          📄 Load
                         </Button>
                         <IconButton
                           size="small"
@@ -6506,8 +7150,26 @@ Whitefield Sub-POP,13.0358,77.5970,Sub-POP,Active,"Whitefield, Bangalore, Karnat
             </List>
           )}
         </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setHistoryDialogOpen(false)}>Close</Button>
+        <DialogActions sx={{ p: 2.5 }}>
+          <Button 
+            onClick={() => setHistoryDialogOpen(false)}
+            variant="outlined"
+            sx={{
+              fontWeight: 'bold',
+              textTransform: 'none',
+              borderRadius: 2.5,
+              py: 1.5,
+              px: 3,
+              borderColor: '#757575',
+              color: '#757575',
+              '&:hover': {
+                backgroundColor: 'rgba(117, 117, 117, 0.08)',
+                borderColor: '#616161'
+              }
+            }}
+          >
+            Close
+          </Button>
         </DialogActions>
       </Dialog>
       
@@ -6540,17 +7202,45 @@ Whitefield Sub-POP,13.0358,77.5970,Sub-POP,Active,"Whitefield, Bangalore, Karnat
             Created: {measurementToDelete?.date}
           </Typography>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={cancelDelete} variant="outlined">
+        <DialogActions sx={{ p: 2.5, gap: 1.5 }}>
+          <Button 
+            onClick={cancelDelete} 
+            variant="outlined"
+            sx={{
+              fontWeight: 'bold',
+              textTransform: 'none',
+              borderRadius: 2.5,
+              py: 1.5,
+              px: 3,
+              borderColor: '#757575',
+              color: '#757575',
+              '&:hover': {
+                backgroundColor: 'rgba(117, 117, 117, 0.08)',
+                borderColor: '#616161'
+              }
+            }}
+          >
             Cancel
           </Button>
           <Button 
             onClick={deleteMeasurement} 
             variant="contained" 
-            color="error"
             startIcon={<Delete />}
+            sx={{
+              fontWeight: 'bold',
+              textTransform: 'none',
+              borderRadius: 2.5,
+              py: 1.5,
+              px: 3,
+              background: 'linear-gradient(135deg, #F44336 0%, #D32F2F 100%)',
+              '&:hover': {
+                background: 'linear-gradient(135deg, #D32F2F 0%, #B71C1C 100%)',
+                transform: 'translateY(-1px)',
+                boxShadow: '0 6px 16px rgba(244, 67, 54, 0.3)'
+              }
+            }}
           >
-            Delete
+            🗑️ Delete
           </Button>
         </DialogActions>
       </Dialog>
@@ -6570,9 +7260,45 @@ Whitefield Sub-POP,13.0358,77.5970,Sub-POP,Active,"Whitefield, Bangalore, Karnat
             placeholder={`Polygon ${Date.now()}`}
           />
         </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setPolygonSaveDialogOpen(false)}>Cancel</Button>
-          <Button onClick={savePolygonData} variant="contained">Save</Button>
+        <DialogActions sx={{ p: 2.5, gap: 1.5 }}>
+          <Button 
+            onClick={() => setPolygonSaveDialogOpen(false)}
+            variant="outlined"
+            sx={{
+              fontWeight: 'bold',
+              textTransform: 'none',
+              borderRadius: 2.5,
+              py: 1.5,
+              px: 3,
+              borderColor: '#757575',
+              color: '#757575',
+              '&:hover': {
+                backgroundColor: 'rgba(117, 117, 117, 0.08)',
+                borderColor: '#616161'
+              }
+            }}
+          >
+            Cancel
+          </Button>
+          <Button 
+            onClick={savePolygonData} 
+            variant="contained"
+            sx={{
+              fontWeight: 'bold',
+              textTransform: 'none',
+              borderRadius: 2.5,
+              py: 1.5,
+              px: 3,
+              background: 'linear-gradient(135deg, #9C27B0 0%, #7B1FA2 100%)',
+              '&:hover': {
+                background: 'linear-gradient(135deg, #7B1FA2 0%, #4A148C 100%)',
+                transform: 'translateY(-1px)',
+                boxShadow: '0 6px 16px rgba(156, 39, 176, 0.3)'
+              }
+            }}
+          >
+            💾 Save Polygon
+          </Button>
         </DialogActions>
       </Dialog>
 
