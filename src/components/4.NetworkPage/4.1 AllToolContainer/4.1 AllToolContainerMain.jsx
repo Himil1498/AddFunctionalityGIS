@@ -167,6 +167,8 @@ import {
 import useGoogleMapWithIndia from "../../../hooks/useGoogleMapWithIndia";
 import useRegionAccess from "../../../hooks/useRegionAccess";
 import MeasureDistanceComponent from '../../MeasureDistance/MeasureDistanceComponent';
+import WorkingMeasurementMap from '../../WorkingMeasurementMap';
+import GISProfessionalDashboard from '../../GISProfessionalDashboard';
 // import MapSearchBox from "../../MapSearchBox";
 
 export default function AllToolContainer({ userData = {} }) {
@@ -207,6 +209,7 @@ export default function AllToolContainer({ userData = {} }) {
   const [selectedInfraType, setSelectedInfraType] = useState("");
   const [bookmarkDialog, setBookmarkDialog] = useState(false);
   const [settingsDialog, setSettingsDialog] = useState(false);
+  const [advancedDashboardDialog, setAdvancedDashboardDialog] = useState(false);
 
   const drawerWidth = 340;
 
@@ -839,7 +842,7 @@ export default function AllToolContainer({ userData = {} }) {
           </Card>
 
           {/* Enhanced Analysis Tools */}
-          <Card>
+          <Card sx={{ mb: 2 }}>
             <CardHeader
               title="Analysis Tools"
               sx={{ pb: 1 }}
@@ -890,6 +893,97 @@ export default function AllToolContainer({ userData = {} }) {
                   />
                 </ListItemButton>
               </List>
+            </CardContent>
+          </Card>
+
+          {/* GIS Professional Dashboard */}
+          <Card 
+            sx={{ 
+              mb: 2,
+              background: 'linear-gradient(135deg, #1976D2 0%, #1565C0 100%)',
+              color: 'white',
+              position: 'relative',
+              overflow: 'hidden'
+            }}
+          >
+            <Box
+              sx={{
+                position: 'absolute',
+                top: -50,
+                right: -50,
+                width: 100,
+                height: 100,
+                borderRadius: '50%',
+                background: 'rgba(255, 255, 255, 0.1)',
+                zIndex: 0
+              }}
+            />
+            <CardHeader
+              title={
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <MapIcon sx={{ fontSize: 28 }} />
+                  <Box>
+                    <Typography variant="h6" component="div" sx={{ fontWeight: 'bold' }}>
+                      GIS Professional Dashboard
+                    </Typography>
+                    <Chip 
+                      label="Advanced" 
+                      size="small" 
+                      sx={{ 
+                        bgcolor: 'rgba(255, 255, 255, 0.2)', 
+                        color: 'white',
+                        fontSize: '0.7rem',
+                        mt: 0.5
+                      }} 
+                    />
+                  </Box>
+                </Box>
+              }
+              sx={{ pb: 1, position: 'relative', zIndex: 1 }}
+            />
+            <CardContent sx={{ pt: 0, position: 'relative', zIndex: 1 }}>
+              <Typography variant="body2" sx={{ mb: 2, opacity: 0.9 }}>
+                Professional-grade measurement and analysis tools with enhanced functionality
+              </Typography>
+              
+              <Button
+                variant="contained"
+                fullWidth
+                startIcon={<Timeline />}
+                onClick={() => setAdvancedDashboardDialog(true)}
+                sx={{
+                  bgcolor: 'rgba(255, 255, 255, 0.15)',
+                  color: 'white',
+                  fontWeight: 'bold',
+                  py: 1.5,
+                  borderRadius: 2,
+                  backdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  transition: 'all 0.3s ease',
+                  '&:hover': {
+                    bgcolor: 'rgba(255, 255, 255, 0.25)',
+                    transform: 'translateY(-2px)',
+                    boxShadow: '0 8px 25px rgba(0, 0, 0, 0.3)'
+                  }
+                }}
+              >
+                Launch Dashboard
+              </Button>
+              
+              <Box sx={{ mt: 2, display: 'flex', justifyContent: 'space-between' }}>
+                <Box sx={{ textAlign: 'center' }}>
+                  <Typography variant="h6" sx={{ fontWeight: 'bold' }}>12</Typography>
+                  <Typography variant="caption" sx={{ opacity: 0.8 }}>Tools</Typography>
+                </Box>
+                <Box sx={{ textAlign: 'center' }}>
+                  <Typography variant="h6" sx={{ fontWeight: 'bold' }}>∞</Typography>
+                  <Typography variant="caption" sx={{ opacity: 0.8 }}>Precision</Typography>
+                </Box>
+                <Box sx={{ textAlign: 'center' }}>
+                  <Typography variant="h6" sx={{ fontWeight: 'bold' }}>PRO</Typography>
+                  <Typography variant="caption" sx={{ opacity: 0.8 }}>Grade</Typography>
+                </Box>
+              </Box>
             </CardContent>
           </Card>
         </Box>
@@ -1188,6 +1282,103 @@ export default function AllToolContainer({ userData = {} }) {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Advanced GIS Professional Dashboard Dialog */}
+      {advancedDashboardDialog && (
+        <Box
+          sx={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            bgcolor: 'rgba(0,0,0,0.9)',
+            zIndex: 2000,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+        >
+          <Box
+            sx={{
+              width: '98vw',
+              height: '98vh',
+              bgcolor: 'background.paper',
+              borderRadius: 3,
+              position: 'relative',
+              overflow: 'hidden',
+              boxShadow: '0 25px 50px rgba(0,0,0,0.5)'
+            }}
+          >
+            {/* Dashboard Header */}
+            <Box
+              sx={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                height: 60,
+                background: 'linear-gradient(135deg, #1976D2 0%, #1565C0 100%)',
+                color: 'white',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                px: 3,
+                zIndex: 2001
+              }}
+            >
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <MapIcon sx={{ fontSize: 32 }} />
+                <Box>
+                  <Typography variant="h5" component="div" sx={{ fontWeight: 'bold' }}>
+                    GIS Professional Dashboard
+                  </Typography>
+                  <Typography variant="body2" sx={{ opacity: 0.9 }}>
+                    Advanced measurement and analysis tools
+                  </Typography>
+                </Box>
+              </Box>
+              
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <Chip 
+                  label="Pro Version" 
+                  sx={{ 
+                    bgcolor: 'rgba(255, 255, 255, 0.2)', 
+                    color: 'white',
+                    fontWeight: 'bold'
+                  }} 
+                />
+                <IconButton
+                  onClick={() => setAdvancedDashboardDialog(false)}
+                  sx={{
+                    bgcolor: 'rgba(255, 255, 255, 0.1)',
+                    color: 'white',
+                    '&:hover': {
+                      bgcolor: 'rgba(255, 255, 255, 0.2)'
+                    }
+                  }}
+                >
+                  <Close />
+                </IconButton>
+              </Box>
+            </Box>
+
+            {/* GIS Professional Dashboard Component */}
+            <Box
+              sx={{
+                position: 'absolute',
+                top: 60,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                overflow: 'hidden'
+              }}
+            >
+              <GISProfessionalDashboard />
+            </Box>
+          </Box>
+        </Box>
+      )}
     </Box>
   );
 }

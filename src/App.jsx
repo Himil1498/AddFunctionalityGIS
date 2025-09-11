@@ -17,6 +17,7 @@ import AllToolCard from "./components/AllTooCard";
 import AllTools from "./components/AllTools";
 import WorkingMeasurementMap from "./components/WorkingMeasurementMap";
 import QuickMapAccess from "./components/QuickMapAccess";
+import GISProfessionalDashboard from "./components/GISProfessionalDashboard";
 
 export default function App() {
   const dispatch = useDispatch();
@@ -27,93 +28,100 @@ export default function App() {
 
   return (
     <>
-    <Routes>
-      {/* Public route */}
-      <Route path="/" element={<LoginBox />} />
+      <Routes>
+        {/* Public route */}
+        <Route path="/" element={<LoginBox />} />
 
-      {/* Protected routes inside Layout */}
-      <Route
-        path="/dashboard"
-        element={
-          <ProtectedRoute>
+        {/* Protected routes inside Layout */}
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <Dashboard />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/network"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <Network />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/network/allToolContainer"
+          element={
+            <ProtectedRoute>
+              <AllToolContainer />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/administration"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <Administration />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/gisToolInterface"
+          element={
+            <ProtectedRoute>
+              <GISToolInterface />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/allToolCard"
+          element={
             <Layout>
-              <Dashboard />
+              <AllToolCard />
             </Layout>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/network"
-        element={
-          <ProtectedRoute>
+          }
+        />
+        <Route
+          path="/allTools"
+          element={
             <Layout>
-              <Network />
+              <AllTools />
             </Layout>
-          </ProtectedRoute>
-        }
-      />
+          }
+        />
 
-      <Route
-        path="/network/allToolContainer"
-        element={
-          <ProtectedRoute>
-            <AllToolContainer />
-          </ProtectedRoute>
-        }
-      />
+        <Route
+          path="/workingMap"
+          element={
+            <ProtectedRoute>
+              <WorkingMeasurementMap />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/gisProfessionalDashboard"
+          element={
+            <ProtectedRoute>
+              <GISProfessionalDashboard />
+            </ProtectedRoute>
+          }
+        />
 
-      <Route
-        path="/administration"
-        element={
-          <ProtectedRoute>
-            <Layout>
-              <Administration />
-            </Layout>
-          </ProtectedRoute>
-        }
-      />
+        {/* Catch-all → redirect */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
 
-      <Route
-        path="/gisToolInterface"
-        element={
-          <ProtectedRoute>
-            <GISToolInterface />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/allToolCard"
-        element={
-          <Layout>
-            <AllToolCard />
-          </Layout>
-        }
-      />
-      <Route
-        path="/allTools"
-        element={
-          <Layout>
-            <AllTools />
-          </Layout>
-        }
-      />
-      
-      <Route
-        path="/workingMap"
-        element={
-          <ProtectedRoute>
-            <WorkingMeasurementMap />
-          </ProtectedRoute>
-        }
-      />
-
-
-      {/* Catch-all → redirect */}
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
-    
-    {/* Floating Quick Access to Map Tools */}
-    <QuickMapAccess />
+      {/* Floating Quick Access to Map Tools */}
+      <QuickMapAccess />
     </>
   );
 }

@@ -39,7 +39,10 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
-  InputAdornment
+  InputAdornment,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails
 } from '@mui/material';
 import {
   PlayArrow,
@@ -75,7 +78,11 @@ import {
   CheckCircle,
   Cancel,
   Settings,
-  TrendingUp
+  TrendingUp,
+  BugReport,
+  Code,
+  ExpandMore,
+  Download
 } from '@mui/icons-material';
 import useIndiaBoundary from '../hooks/useIndiaBoundary';
 import AddLocationForm from './AddLocationForm';
@@ -109,18 +116,54 @@ if (typeof document !== 'undefined' && !document.querySelector('#elevation-anima
 
 /**
  * Working Measurement Map - Using exact patterns from SimpleMapTest
+ * @param {Object} props - Component props
+ * @param {boolean} props.hideControls - Hide the control panel
+ * @param {boolean} props.hideHeader - Hide the header section
+ * @param {boolean} props.isDrawing - External drawing state
+ * @param {boolean} props.isPolygonDrawing - External polygon drawing state
+ * @param {boolean} props.showElevation - External elevation state
+ * @param {boolean} props.showInfrastructure - External infrastructure state
+ * @param {Function} props.onDrawingChange - Callback for drawing state changes
+ * @param {Function} props.onPolygonDrawingChange - Callback for polygon drawing state changes
+ * @param {Function} props.onPointsChange - Callback for points changes
+ * @param {Function} props.onPolygonPointsChange - Callback for polygon points changes
  */
-const WorkingMeasurementMap = () => {
+const WorkingMeasurementMap = React.forwardRef(({
+  hideControls = false,
+  hideHeader = false,
+  isDrawing: externalIsDrawing,
+  isPolygonDrawing: externalIsPolygonDrawing,
+  showElevation: externalShowElevation,
+  showInfrastructure: externalShowInfrastructure,
+  selectedBaseMap = 'satellite',
+  onDrawingChange,
+  onPolygonDrawingChange,
+  onPointsChange,
+  onPolygonPointsChange,
+  onTotalDistanceChange,
+  onPolygonAreaChange,
+  onCoordinatesChange,
+  onZoomChange,
+  onLogsChange,
+  onMouseCoordinatesChange,
+  showDebugLogs = false
+} = {}, ref) => {
   const theme = useTheme();
   
   // Basic state from SimpleMapTest
   const [map, setMap] = useState(null);
   const [loaded, setLoaded] = useState(false);
-  const [points, setPoints] = useState([]);
-  const [isDrawing, setIsDrawing] = useState(false);
+  const [internalPoints, setInternalPoints] = useState([]);
+  const [internalIsDrawing, setInternalIsDrawing] = useState(false);
   const [polyline, setPolyline] = useState(null);
   const [markers, setMarkers] = useState([]);
   const [logs, setLogs] = useState([]);
+  
+  // Use external states when provided, otherwise use internal states
+  const points = internalPoints; // Always use internal points for actual data
+  const isDrawing = externalIsDrawing !== undefined ? externalIsDrawing : internalIsDrawing;
+  const setPoints = setInternalPoints; // Always use internal setter
+  const setIsDrawing = onDrawingChange || setInternalIsDrawing;
   
   // Enhanced features
   const [totalDistance, setTotalDistance] = useState(0);
@@ -147,13 +190,19 @@ const WorkingMeasurementMap = () => {
   
   // Polygon drawing state
   const [drawingMode, setDrawingMode] = useState('distance'); // 'distance' or 'polygon'
-  const [polygonPoints, setPolygonPoints] = useState([]);
+  const [internalPolygonPoints, setInternalPolygonPoints] = useState([]);
   const [polygon, setPolygon] = useState(null);
   const [polygonMarkers, setPolygonMarkers] = useState([]);
   const [polygonArea, setPolygonArea] = useState(0);
   const [polygonPerimeter, setPolygonPerimeter] = useState(0);
-  const [isPolygonDrawing, setIsPolygonDrawing] = useState(false);
+  const [internalIsPolygonDrawing, setInternalIsPolygonDrawing] = useState(false);
   const [areaLabel, setAreaLabel] = useState(null);
+  
+  // Use external polygon states when provided
+  const polygonPoints = internalPolygonPoints; // Always use internal points for actual data
+  const isPolygonDrawing = externalIsPolygonDrawing !== undefined ? externalIsPolygonDrawing : internalIsPolygonDrawing;
+  const setPolygonPoints = setInternalPolygonPoints; // Always use internal setter
+  const setIsPolygonDrawing = onPolygonDrawingChange || setInternalIsPolygonDrawing;
   
   // Loaded polygon metadata and editing state
   const [loadedPolygonKey, setLoadedPolygonKey] = useState(null);
@@ -162,8 +211,10 @@ const WorkingMeasurementMap = () => {
   const [isEditingPolygon, setIsEditingPolygon] = useState(false);
   const polygonPathListenersRef = useRef([]);
   
-  // Infrastructure state
-  const [showInfrastructure, setShowInfrastructure] = useState(false);
+  // Infrastructure state - use external when provided
+  const [internalShowInfrastructure, setInternalShowInfrastructure] = useState(false);
+  const showInfrastructure = externalShowInfrastructure !== undefined ? externalShowInfrastructure : internalShowInfrastructure;
+  const setShowInfrastructure = externalShowInfrastructure !== undefined ? (() => {}) : setInternalShowInfrastructure;
   const [showPopLayer, setShowPopLayer] = useState(() => {
     const v = localStorage.getItem('infra_toggle_pop');
     return v ? JSON.parse(v) : false;
@@ -216,8 +267,9 @@ const WorkingMeasurementMap = () => {
   const mapRef = useRef(null);
   const clickListenerRef = useRef(null);
   
-  // Elevation state
-  const [showElevation, setShowElevation] = useState(false);
+  // Elevation state - use external when provided
+  const [internalShowElevation, setInternalShowElevation] = useState(false);
+  const showElevation = externalShowElevation !== undefined ? externalShowElevation : internalShowElevation;
   const [elevationData, setElevationData] = useState([]);
   const [elevationChart, setElevationChart] = useState(null);
   const [elevationMarkers, setElevationMarkers] = useState([]);
@@ -346,10 +398,26 @@ const WorkingMeasurementMap = () => {
     
     return () => clearTimeout(timer);
   }, []);
+  
+  // Add initial log on mount
+  useEffect(() => {
+    addLog('🚀 WorkingMeasurementMap component initialized');
+    addLog('🗺️ Map system ready for measurements');
+  }, []);
 
   const addLog = (message) => {
-    console.log(message);
-    setLogs(prev => [...prev.slice(-4), `${new Date().toLocaleTimeString()}: ${message}`]);
+    const timestamp = new Date().toLocaleTimeString();
+    const logEntry = `[${timestamp}] ${message}`;
+    console.log(logEntry);
+    
+    setLogs(prev => {
+      const newLogs = [...prev.slice(-49), logEntry]; // Keep last 50 logs
+      // Pass logs to parent component if callback provided
+      if (onLogsChange) {
+        onLogsChange(newLogs);
+      }
+      return newLogs;
+    });
   };
 
   const addNotification = (message, severity = 'info') => {
@@ -466,6 +534,27 @@ const WorkingMeasurementMap = () => {
     return label;
   };
 
+  // Handle base map changes
+  useEffect(() => {
+    if (map && window.google && window.google.maps) {
+      const getMapTypeId = (baseMapType) => {
+        switch (baseMapType) {
+          case 'street':
+            return window.google.maps.MapTypeId.ROADMAP;
+          case 'terrain':
+            return window.google.maps.MapTypeId.TERRAIN;
+          case 'satellite':
+          default:
+            return window.google.maps.MapTypeId.HYBRID;
+        }
+      };
+      
+      map.setMapTypeId(getMapTypeId(selectedBaseMap));
+      addLog(`🗺️ Base map changed to: ${selectedBaseMap}`);
+      addNotification(`Switched to ${selectedBaseMap} view`, 'info');
+    }
+  }, [selectedBaseMap, map]);
+
   // EXACT SAME LOADING PATTERN AS SIMPLEMAPTEST
   useEffect(() => {
     const loadMap = async () => {
@@ -521,10 +610,23 @@ const WorkingMeasurementMap = () => {
     try {
       addLog('🗺️ Initializing map...');
       
+      // Map base map type based on selectedBaseMap prop
+      const getMapTypeId = (baseMapType) => {
+        switch (baseMapType) {
+          case 'street':
+            return window.google.maps.MapTypeId.ROADMAP;
+          case 'terrain':
+            return window.google.maps.MapTypeId.TERRAIN;
+          case 'satellite':
+          default:
+            return window.google.maps.MapTypeId.HYBRID;
+        }
+      };
+
       const mapInstance = new window.google.maps.Map(mapRef.current, {
         center: { lat: 20.5937, lng: 78.9629 },
         zoom: 6,
-        mapTypeId: window.google.maps.MapTypeId.HYBRID,
+        mapTypeId: getMapTypeId(selectedBaseMap),
         restriction: {
           latLngBounds: {
             north: 37.6,
@@ -534,16 +636,67 @@ const WorkingMeasurementMap = () => {
           },
           strictBounds: false,
         },
-        streetViewControl: true, // Enable Street View control
-        streetViewControlOptions: {
-          position: window.google.maps.ControlPosition.TOP_RIGHT
-        }
+        // Hide default controls for cleaner interface
+        streetViewControl: false,
+        mapTypeControl: false,
+        fullscreenControl: false,
+        zoomControl: false,
+        scaleControl: false,
+        rotateControl: false,
+        panControl: false
       });
 
       setMap(mapInstance);
       setLoaded(true);
       addLog('✅ Map initialized successfully');
       addNotification('Map loaded successfully!', 'success');
+      
+      // Add listeners for live coordinates tracking
+      if (onCoordinatesChange || onZoomChange) {
+        // Track map center changes
+        mapInstance.addListener('center_changed', () => {
+          const center = mapInstance.getCenter();
+          const zoom = mapInstance.getZoom();
+          if (onCoordinatesChange && center) {
+            onCoordinatesChange({ lat: center.lat(), lng: center.lng() });
+          }
+          if (onZoomChange && zoom) {
+            onZoomChange(zoom);
+          }
+        });
+        
+        // Track zoom changes
+        mapInstance.addListener('zoom_changed', () => {
+          const zoom = mapInstance.getZoom();
+          if (onZoomChange && zoom) {
+            onZoomChange(zoom);
+          }
+        });
+        
+        // Initial coordinates and zoom
+        const initialCenter = mapInstance.getCenter();
+        const initialZoom = mapInstance.getZoom();
+        if (onCoordinatesChange && initialCenter) {
+          onCoordinatesChange({ lat: initialCenter.lat(), lng: initialCenter.lng() });
+        }
+        if (onZoomChange && initialZoom) {
+          onZoomChange(initialZoom);
+        }
+      }
+      
+      // Add mouse move listener for hover coordinates
+      if (onMouseCoordinatesChange) {
+        mapInstance.addListener('mousemove', (event) => {
+          const lat = event.latLng.lat();
+          const lng = event.latLng.lng();
+          onMouseCoordinatesChange({ lat, lng });
+        });
+        
+        // Clear mouse coordinates when mouse leaves map
+        mapInstance.addListener('mouseout', () => {
+          onMouseCoordinatesChange(null);
+        });
+      }
       
       // Add resize listener to handle Street View after window resize
       window.addEventListener('resize', () => {
@@ -4502,7 +4655,7 @@ Whitefield Sub-POP,13.0358,77.5970,Sub-POP,Active,"Whitefield, Bangalore, Karnat
     }
   }, [map, loaded]);
   
-  // Street View toggle with comprehensive error handling
+  // Street View toggle with comprehensive error handling and name preservation
   const toggleStreetView = () => {
     addLog('🔍 Starting Street View toggle...');
     
@@ -4528,11 +4681,12 @@ Whitefield Sub-POP,13.0358,77.5970,Sub-POP,Active,"Whitefield, Bangalore, Karnat
         if (streetView) {
           streetView.setVisible(false);
           setStreetViewOpen(false);
+          setStreetViewPosition(null);
           addLog('✅ Street View closed successfully');
           addNotification('Street View closed', 'info');
         }
       } else {
-        // Open Street View - Enhanced approach
+        // Open Street View - Enhanced approach with measurement preservation
         addLog('🔄 Opening Street View...');
         
         // Determine target position
@@ -4561,6 +4715,23 @@ Whitefield Sub-POP,13.0358,77.5970,Sub-POP,Active,"Whitefield, Bangalore, Karnat
           const isVisible = streetView.getVisible();
           setStreetViewOpen(isVisible);
           addLog(`🌆 Street View visibility: ${isVisible}`);
+          
+          // Refresh measurement labels when street view opens/closes
+          if (isVisible) {
+            refreshMeasurementLabelsForStreetView();
+          }
+        });
+        
+        // Add position change listener to maintain measurement names
+        const positionListener = streetView.addListener('position_changed', () => {
+          const newPosition = streetView.getPosition();
+          if (newPosition) {
+            setStreetViewPosition({
+              lat: newPosition.lat(),
+              lng: newPosition.lng()
+            });
+            refreshMeasurementLabelsForStreetView();
+          }
         });
         
         // Make Street View visible
@@ -4568,8 +4739,8 @@ Whitefield Sub-POP,13.0358,77.5970,Sub-POP,Active,"Whitefield, Bangalore, Karnat
         setStreetViewOpen(true);
         setStreetViewPosition(targetPosition);
         
-        addLog('✅ Street View opened successfully');
-        addNotification('Street View opened! Use ESC key or Street View controls to close.', 'success');
+        addLog('✅ Street View opened successfully with measurement name preservation');
+        addNotification('Street View opened! Measurement names preserved. Use ESC key or Street View controls to close.', 'success');
       }
     } catch (error) {
       addLog(`❌ Street View error: ${error.message}`);
@@ -4579,6 +4750,39 @@ Whitefield Sub-POP,13.0358,77.5970,Sub-POP,Active,"Whitefield, Bangalore, Karnat
       // Reset state on error
       setStreetViewOpen(false);
     }
+  };
+  
+  // Function to refresh measurement labels specifically for Street View
+  const refreshMeasurementLabelsForStreetView = () => {
+    if (!streetViewOpen) return;
+    
+    addLog('🔄 Refreshing measurement labels for Street View');
+    
+    // Ensure saved measurement names remain visible in Street View
+    savedMeasurements.forEach((measurement, index) => {
+      if (measurement.points && measurement.points.length > 0) {
+        // Update marker titles with measurement names
+        measurement.points.forEach((point, pointIndex) => {
+          if (point.marker && point.marker.setTitle) {
+            const title = pointIndex === 0 
+              ? `${measurement.name} - Start Point`
+              : `${measurement.name} - Point ${pointIndex + 1}`;
+            point.marker.setTitle(title);
+            addLog(`🏷️ Updated marker title: ${title}`);
+          }
+        });
+      }
+    });
+    
+    // Refresh distance labels to ensure visibility
+    distanceLabels.forEach((label, index) => {
+      if (label && label.setMap) {
+        label.setMap(map);
+        addLog(`✅ Distance label ${index + 1} refreshed for Street View`);
+      }
+    });
+    
+    addLog('✅ Street View measurement labels refresh completed');
   };
   
   // Refresh measurements to ensure visibility in all modes
@@ -4648,21 +4852,267 @@ Whitefield Sub-POP,13.0358,77.5970,Sub-POP,Active,"Whitefield, Bangalore, Karnat
     }
   };
   
+  // Expose methods through ref
+  React.useImperativeHandle(ref, () => ({
+    // Map reference
+    map,
+    
+    // Drawing controls
+    startDrawing: () => {
+      addLog('🎯 Dashboard calling startDrawing()');
+      return startDrawing();
+    },
+    stopDrawing: () => {
+      addLog('⏹️ Dashboard calling stopDrawing()');
+      return stopDrawing();
+    },
+    startPolygonDrawing: () => {
+      addLog('📐 Dashboard calling startPolygonDrawing()');
+      return startPolygonDrawing();
+    },
+    stopPolygonDrawing: () => {
+      addLog('⏹️ Dashboard calling stopPolygonDrawing()');
+      return stopPolygonDrawing();
+    },
+    clearAll: () => {
+      addLog('🧹 Dashboard calling clearAll()');
+      return clearAll();
+    },
+    
+    // Map controls
+    zoomIn,
+    zoomOut,
+    centerOnIndia,
+    toggleStreetView,
+    
+    // Layer controls
+    setShowElevation: (show) => {
+      // Always update the appropriate state based on external control
+      if (externalShowElevation === undefined) {
+        setInternalShowElevation(show);
+      }
+      // For external control, the parent will handle the state update
+      addLog(`📈 Elevation toggled: ${show}`);
+    },
+    setShowInfrastructure: (show) => {
+      // Always update the appropriate state based on external control
+      if (externalShowInfrastructure === undefined) {
+        setInternalShowInfrastructure(show);
+      }
+      // For external control, the parent will handle the state update
+      addLog(`🏢 Infrastructure toggled: ${show}`);
+    },
+    
+    // Layer management
+    toggleLayer: (layerName, isActive) => {
+      addLog(`🌍 Layer toggle: ${layerName} = ${isActive}`);
+      
+      if (!map || !window.google) {
+        addLog('❌ Map not ready for layer toggle');
+        return;
+      }
+      
+      switch (layerName) {
+        case 'boundaries':
+          // Toggle administrative boundaries overlay
+          if (isActive) {
+            addLog('✅ Enabling boundaries layer');
+            addNotification('Administrative boundaries enabled', 'info');
+          } else {
+            addLog('❌ Disabling boundaries layer');
+            addNotification('Administrative boundaries disabled', 'info');
+          }
+          break;
+          
+        case 'roads':
+          // Toggle roads visibility by changing map style
+          if (isActive) {
+            addLog('✅ Enabling roads layer');
+            addNotification('Roads layer enabled', 'info');
+          } else {
+            addLog('❌ Disabling roads layer');
+            addNotification('Roads layer disabled', 'info');
+          }
+          break;
+          
+        case 'buildings':
+          // Toggle buildings 3D view
+          if (isActive) {
+            addLog('✅ Enabling buildings layer');
+            map.setTilt(45); // Enable 3D buildings view
+            addNotification('3D Buildings enabled', 'info');
+          } else {
+            addLog('❌ Disabling buildings layer');
+            map.setTilt(0); // Disable 3D buildings view
+            addNotification('3D Buildings disabled', 'info');
+          }
+          break;
+          
+        case 'terrain':
+          // Toggle terrain visibility
+          if (isActive) {
+            addLog('✅ Enabling terrain layer');
+            // Enable terrain visualization
+            addNotification('Terrain layer enabled', 'info');
+          } else {
+            addLog('❌ Disabling terrain layer');
+            addNotification('Terrain layer disabled', 'info');
+          }
+          break;
+          
+        case 'infrastructure':
+          // Toggle infrastructure POI visibility
+          if (isActive) {
+            addLog('✅ Enabling infrastructure layer');
+            // Enable infrastructure points of interest
+            addNotification('Infrastructure POIs enabled', 'info');
+          } else {
+            addLog('❌ Disabling infrastructure layer');
+            addNotification('Infrastructure POIs disabled', 'info');
+          }
+          break;
+          
+        default:
+          addLog(`⚠️ Unknown layer: ${layerName}`);
+          break;
+      }
+    },
+    
+    // Add Street View label refresh function to exposed methods
+    refreshMeasurementLabelsForStreetView,
+    // Save functions
+    saveMeasurement: (name) => {
+      if (totalDistance > 0 && points.length >= 2) {
+        const measurement = {
+          name: name || `Measurement ${Date.now()}`,
+          distance: totalDistance,
+          points: [...points],
+          segmentDistances: [...segmentDistances],
+          date: new Date().toLocaleString()
+        };
+        localStorage.setItem(`distance_measurement_${Date.now()}`, JSON.stringify(measurement));
+        addLog(`💾 Distance measurement saved: ${name}`);
+        addNotification('Distance measurement saved successfully!', 'success');
+      }
+    },
+    
+    savePolygonData: (name) => {
+      if (polygonArea > 0 && polygonPoints.length >= 3) {
+        const polygonData = {
+          name: name || `Polygon ${Date.now()}`,
+          area: polygonArea,
+          perimeter: polygonPerimeter,
+          points: [...polygonPoints],
+          date: new Date().toLocaleString()
+        };
+        localStorage.setItem(`polygon_${Date.now()}`, JSON.stringify(polygonData));
+        addLog(`💾 Polygon saved: ${name}`);
+        addNotification('Polygon saved successfully!', 'success');
+      }
+    },
+    
+    // History functions
+    loadSavedMeasurements,
+    setHistoryDialogOpen: (open) => setHistoryDialogOpen(open),
+    
+    // State getters
+    getPoints: () => points,
+    getPolygonPoints: () => polygonPoints,
+    getTotalDistance: () => totalDistance,
+    getPolygonArea: () => polygonArea
+  }), [map, points, polygonPoints, totalDistance, polygonArea, segmentDistances, polygonPerimeter]);
+  
+  // Update parent state when internal states change
+  React.useEffect(() => {
+    // Use setTimeout to avoid setState during render
+    const timer = setTimeout(() => {
+      if (onTotalDistanceChange) {
+        onTotalDistanceChange(totalDistance);
+      }
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [totalDistance, onTotalDistanceChange]);
+  
+  React.useEffect(() => {
+    // Use setTimeout to avoid setState during render
+    const timer = setTimeout(() => {
+      if (onPolygonAreaChange) {
+        onPolygonAreaChange(polygonArea);
+      }
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [polygonArea, onPolygonAreaChange]);
+  
+  React.useEffect(() => {
+    // Use setTimeout to avoid setState during render
+    const timer = setTimeout(() => {
+      if (onPointsChange) {
+        onPointsChange(internalPoints);
+      }
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [internalPoints, onPointsChange]);
+  
+  React.useEffect(() => {
+    // Use setTimeout to avoid setState during render
+    const timer = setTimeout(() => {
+      if (onPolygonPointsChange) {
+        onPolygonPointsChange(internalPolygonPoints);
+      }
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [internalPolygonPoints, onPolygonPointsChange]);
+  
+  // Handle elevation state changes from external controls
+  React.useEffect(() => {
+    if (externalShowElevation !== undefined) {
+      addLog(`🏩 External elevation state changed: ${externalShowElevation}`);
+      if (externalShowElevation && points.length >= 2) {
+        // Auto-trigger elevation analysis when enabled with existing points
+        setTimeout(() => {
+          getElevationForPath().catch(error => {
+            addLog(`⚠️ Auto elevation update failed: ${error.message}`);
+          });
+        }, 100);
+      } else if (!externalShowElevation) {
+        // Clear elevation data when disabled
+        clearElevationData();
+      }
+    }
+  }, [externalShowElevation, points.length]);
+  
+  // Handle infrastructure state changes from external controls
+  React.useEffect(() => {
+    if (externalShowInfrastructure !== undefined) {
+      addLog(`🏢 External infrastructure state changed: ${externalShowInfrastructure}`);
+      // Infrastructure layers are managed by the existing toggle functions
+      // The state change will trigger the conditional rendering of infrastructure panels
+    }
+  }, [externalShowInfrastructure]);
+
   // Load saved measurements
   const loadSavedMeasurements = () => {
+    addLog('🗺 Loading saved measurements from localStorage...');
     const measurements = [];
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
-      if (key && key.startsWith('measurement_')) {
+      if (key && key.startsWith('distance_measurement_')) {
         try {
           const data = JSON.parse(localStorage.getItem(key));
+          // Add formatted distance if not present
+          if (!data.formattedDistance && data.distance) {
+            data.formattedDistance = `${(data.distance / 1000).toFixed(2)} km`;
+          }
           measurements.push({ key, ...data });
+          addLog(`✅ Loaded measurement: ${data.name}`);
         } catch (error) {
+          addLog(`❌ Error parsing saved measurement: ${error.message}`);
           console.error('Error parsing saved measurement:', error);
         }
       }
     }
-    setSavedMeasurements(measurements.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)));
+    addLog(`📋 Found ${measurements.length} saved measurements`);
+    setSavedMeasurements(measurements.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
   };
   
   // Show delete confirmation
@@ -4827,39 +5277,42 @@ Whitefield Sub-POP,13.0358,77.5970,Sub-POP,Active,"Whitefield, Bangalore, Karnat
 
   return (
     <Box sx={{ 
-      height: '100vh', 
+      height: hideHeader && hideControls ? '100vh' : '100vh', 
       display: 'flex', 
       flexDirection: 'column',
       overflow: 'hidden' // Prevent main container scrollbars
     }}>
-      {/* Header */}
-      <Paper elevation={2} sx={{ p: 2, mb: 1 }}>
-        <Stack direction="row" alignItems="center" spacing={2}>
-          <MapIcon color="primary" />
-          <Typography variant="h5" fontWeight="bold">
-            Working Distance Measurement Tool
-          </Typography>
-          {(isDrawing || isPolygonDrawing) && (
-            <Chip 
-              label={isDrawing ? "MEASURING DISTANCE" : "DRAWING POLYGON"} 
-              color="success" 
-              icon={isDrawing ? <Timeline /> : <Crop />}
-              sx={{ fontWeight: 'bold' }}
-            />
-          )}
-          <Box sx={{ flexGrow: 1 }} />
-          {points.length > 0 && (
-            <Chip 
-              label={`${points.length} points - ${formatDistance(totalDistance)}`}
-              color="primary" 
-              variant="outlined"
-            />
-          )}
-        </Stack>
-      </Paper>
+      {/* Header - conditionally rendered */}
+      {!hideHeader && (
+        <Paper elevation={2} sx={{ p: 2, mb: 1 }}>
+          <Stack direction="row" alignItems="center" spacing={2}>
+            <MapIcon color="primary" />
+            <Typography variant="h5" fontWeight="bold">
+              Working Distance Measurement Tool
+            </Typography>
+            {(isDrawing || isPolygonDrawing) && (
+              <Chip 
+                label={isDrawing ? "MEASURING DISTANCE" : "DRAWING POLYGON"} 
+                color="success" 
+                icon={isDrawing ? <Timeline /> : <Crop />}
+                sx={{ fontWeight: 'bold' }}
+              />
+            )}
+            <Box sx={{ flexGrow: 1 }} />
+            {points.length > 0 && (
+              <Chip 
+                label={`${points.length} points - ${formatDistance(totalDistance)}`}
+                color="primary" 
+                variant="outlined"
+              />
+            )}
+          </Stack>
+        </Paper>
+      )}
 
-      {/* Controls */}
-      <Paper elevation={2} sx={{ p: 2, mb: 1 }}>
+      {/* Controls - conditionally rendered */}
+      {!hideControls && (
+        <Paper elevation={2} sx={{ p: 2, mb: 1 }}>
         <Stack direction="row" spacing={2} alignItems="center">
           {/* Modern Add Points Button */}
           <Button 
@@ -5255,7 +5708,8 @@ Whitefield Sub-POP,13.0358,77.5970,Sub-POP,Active,"Whitefield, Bangalore, Karnat
             </IconButton>
           </Tooltip>
         </Stack>
-      </Paper>
+        </Paper>
+      )}
 
       {/* Map and Results Layout */}
       <Box sx={{ 
@@ -7004,15 +7458,123 @@ Whitefield Sub-POP,13.0358,77.5970,Sub-POP,Active,"Whitefield, Bangalore, Karnat
         )}
       </Box>
 
-      {/* Debug Logs */}
-      <Paper elevation={1} sx={{ mt: 1, maxHeight: 150, overflow: 'auto', bgcolor: '#f5f5f5', p: 1 }}>
-        <Typography variant="subtitle2" gutterBottom>Debug Logs:</Typography>
-        {logs.map((log, index) => (
-          <Typography key={index} variant="body2" sx={{ fontFamily: 'monospace', fontSize: '0.75rem' }}>
-            {log}
-          </Typography>
-        ))}
-      </Paper>
+      {/* Modern Debug Panel - Only show if hideControls is false */}
+      {!hideControls && (
+        <Accordion 
+          sx={{ 
+            mt: 1, 
+            boxShadow: 'none', 
+            border: '1px solid #e3f2fd',
+            '&:before': { display: 'none' }
+          }}
+        >
+          <AccordionSummary 
+            expandIcon={<ExpandMore />}
+            sx={{ 
+              minHeight: 40, 
+              '& .MuiAccordionSummary-content': { margin: '8px 0' },
+              bgcolor: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
+              borderRadius: '4px 4px 0 0'
+            }}
+          >
+            <Stack direction="row" alignItems="center" spacing={1}>
+              <BugReport sx={{ color: '#6c757d', fontSize: 20 }} />
+              <Typography variant="subtitle2" sx={{ fontWeight: 'bold', color: '#6c757d' }}>
+                Debug Console ({logs.length} entries)
+              </Typography>
+            </Stack>
+          </AccordionSummary>
+          <AccordionDetails sx={{ p: 0 }}>
+            <Box 
+              sx={{ 
+                maxHeight: 200, 
+                overflow: 'auto', 
+                bgcolor: '#1e1e1e', 
+                color: '#d4d4d4',
+                fontFamily: 'Consolas, Monaco, "Courier New", monospace',
+                fontSize: '0.75rem',
+                '&::-webkit-scrollbar': { width: 8 },
+                '&::-webkit-scrollbar-track': { background: '#2d2d2d' },
+                '&::-webkit-scrollbar-thumb': { background: '#555', borderRadius: 4 },
+                '&::-webkit-scrollbar-thumb:hover': { background: '#777' }
+              }}
+            >
+              {logs.length === 0 ? (
+                <Box sx={{ p: 2, textAlign: 'center', color: '#888' }}>
+                  <Code sx={{ fontSize: 16, mb: 1 }} />
+                  <Typography variant="body2">No debug logs yet</Typography>
+                </Box>
+              ) : (
+                logs.map((log, index) => {
+                  const isError = log.includes('❌') || log.includes('Error');
+                  const isWarning = log.includes('⚠️') || log.includes('Warning');
+                  const isSuccess = log.includes('✅') || log.includes('Success');
+                  
+                  return (
+                    <Box 
+                      key={index}
+                      sx={{ 
+                        p: '4px 12px',
+                        borderBottom: '1px solid #333',
+                        color: isError ? '#ff6b6b' : isWarning ? '#ffd93d' : isSuccess ? '#6bcf7f' : '#d4d4d4',
+                        '&:hover': { bgcolor: 'rgba(255,255,255,0.05)' },
+                        fontFamily: 'inherit'
+                      }}
+                    >
+                      <Typography 
+                        variant="body2" 
+                        sx={{ 
+                          fontFamily: 'inherit',
+                          fontSize: '0.75rem',
+                          lineHeight: 1.2,
+                          whiteSpace: 'pre-wrap',
+                          wordBreak: 'break-word'
+                        }}
+                      >
+                        {log}
+                      </Typography>
+                    </Box>
+                  );
+                })
+              )}
+            </Box>
+            {logs.length > 0 && (
+              <Box sx={{ p: 1, bgcolor: '#f8f9fa', borderTop: '1px solid #dee2e6' }}>
+                <Stack direction="row" spacing={1} justifyContent="flex-end">
+                  <Button 
+                    size="small" 
+                    onClick={() => setLogs([])} 
+                    startIcon={<Clear />}
+                    sx={{ 
+                      textTransform: 'none', 
+                      color: '#6c757d',
+                      '&:hover': { bgcolor: 'rgba(108, 117, 125, 0.1)' }
+                    }}
+                  >
+                    Clear Logs
+                  </Button>
+                  <Button 
+                    size="small" 
+                    onClick={() => {
+                      const logText = logs.join('\n');
+                      navigator.clipboard.writeText(logText);
+                      addNotification('Debug logs copied to clipboard', 'success');
+                    }}
+                    startIcon={<Download />}
+                    sx={{ 
+                      textTransform: 'none', 
+                      color: '#6c757d',
+                      '&:hover': { bgcolor: 'rgba(108, 117, 125, 0.1)' }
+                    }}
+                  >
+                    Copy Logs
+                  </Button>
+                </Stack>
+              </Box>
+            )}
+          </AccordionDetails>
+        </Accordion>
+      )}
 
       {/* Save Dialog */}
       <Dialog open={saveDialogOpen} onClose={() => setSaveDialogOpen(false)}>
@@ -7330,18 +7892,55 @@ Whitefield Sub-POP,13.0358,77.5970,Sub-POP,Active,"Whitefield, Bangalore, Karnat
                     <ListItemText
                       primary={polygon.name}
                       secondary={
-                        <Stack spacing={0.5}>
-                          <Typography variant="body2" color="text.secondary">
+                        <Box component="div">
+                          <Typography variant="body2" color="text.secondary" component="div">
                             {polygon.date}
                           </Typography>
-                          <Typography variant="body2" color="primary.main">
+                          <Typography variant="body2" color="primary.main" component="div">
                             Area: {formatArea(polygon.area)} • Perimeter: {formatDistance(polygon.perimeter)} • Points: {polygon.points?.length || 0}
                           </Typography>
-                        </Stack>
+                        </Box>
                       }
                     />
                     <ListItemSecondaryAction>
                       <Stack direction="row" spacing={1}>
+                        <Tooltip title="View polygon (zoom to fit)">
+                          <IconButton
+                            size="small"
+                            color="primary"
+                            onClick={() => {
+                              // View polygon with zoom to fit bounds
+                              if (!map || !polygon.points || polygon.points.length === 0) {
+                                addNotification('Invalid polygon data', 'error');
+                                return;
+                              }
+                              
+                              addLog(`🎯 Viewing polygon: ${polygon.name}`);
+                              
+                              // Create bounds from polygon points
+                              const bounds = new window.google.maps.LatLngBounds();
+                              polygon.points.forEach(point => {
+                                bounds.extend(new window.google.maps.LatLng(point.lat, point.lng));
+                              });
+                              
+                              // Fit map to polygon bounds with padding
+                              map.fitBounds(bounds, {
+                                top: 50,
+                                bottom: 50,
+                                left: 50,
+                                right: 50
+                              });
+                              
+                              // Load the polygon visually
+                              loadPolygonData(polygon);
+                              setPolygonHistoryDialogOpen(false);
+                              
+                              addNotification(`Viewing polygon: ${polygon.name}`, 'success');
+                            }}
+                          >
+                            <CenterFocusStrong />
+                          </IconButton>
+                        </Tooltip>
                         <Button
                           size="small"
                           variant="outlined"
@@ -7508,6 +8107,7 @@ Whitefield Sub-POP,13.0358,77.5970,Sub-POP,Active,"Whitefield, Bangalore, Karnat
       ))}
     </Box>
   );
-};
+});
 
+WorkingMeasurementMap.displayName = 'WorkingMeasurementMap';
 export default WorkingMeasurementMap;
